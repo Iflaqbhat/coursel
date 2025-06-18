@@ -79,7 +79,7 @@ export default function Dashboard() {
     }
   };
 
-  const getProgressPercentage = (course: Course) => {
+  const getProgressPercentage = () => {
     // Mock progress - in real app this would come from backend
     return Math.floor(Math.random() * 100);
   };
@@ -358,11 +358,11 @@ export default function Dashboard() {
                                 Progress
                               </Text>
                               <Text fontSize="sm" color="purple.600" fontWeight="medium">
-                                {getProgressPercentage(course)}%
+                                {getProgressPercentage()}%
                               </Text>
                             </HStack>
                             <Progress 
-                              value={getProgressPercentage(course)} 
+                              value={getProgressPercentage()} 
                               colorScheme="purple" 
                               borderRadius="full"
                               size="sm"
