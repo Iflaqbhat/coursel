@@ -42,10 +42,6 @@ const featureImages = [
 
 export default function Home() {
   const { user } = useContext(AuthContext)
-  const bgGradient = useColorModeValue(
-    'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)',
-    'linear-gradient(135deg, #1A202C 0%, #2D3748 100%)'
-  )
   const subTextColor = useColorModeValue('gray.600', 'gray.300')
   const headingColor = useColorModeValue('gray.800', 'white')
 
