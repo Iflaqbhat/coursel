@@ -20,8 +20,6 @@ import {
   StatLabel,
   StatNumber,
   StatHelpText,
-  Divider,
-  Flex,
   Image,
   Progress
 } from '@chakra-ui/react';

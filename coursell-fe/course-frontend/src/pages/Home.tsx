@@ -3,24 +3,17 @@ import {
   Button,
   Container,
   Heading,
-  Stack,
   Text,
   useColorModeValue,
   Grid,
-  GridItem,
   VStack,
   HStack,
   Icon,
   Card,
   CardBody,
   Badge,
-  Flex,
   Image,
-  SimpleGrid,
-  Stat,
-  StatLabel,
-  StatNumber,
-  StatHelpText
+  SimpleGrid
 } from '@chakra-ui/react'
 import { Link as RouterLink } from 'react-router-dom'
 import { useContext } from 'react'
@@ -32,7 +25,6 @@ import {
   FiClock, 
   FiGlobe,
   FiTrendingUp,
-  FiShield,
   FiZap
 } from 'react-icons/fi'
 import { AuthContext } from '../context/AuthContext'

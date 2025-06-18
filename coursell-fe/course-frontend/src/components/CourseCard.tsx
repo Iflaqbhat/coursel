@@ -11,7 +11,6 @@ import {
   HStack,
   VStack,
   Icon,
-  Flex,
   useColorModeValue,
   useToast,
 } from '@chakra-ui/react';

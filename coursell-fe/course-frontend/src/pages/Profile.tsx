@@ -32,7 +32,6 @@ import {
   FiMail, 
   FiLock, 
   FiSave,
-  FiEdit3,
   FiShield
 } from 'react-icons/fi';
 import axios from 'axios';
@@ -49,7 +48,6 @@ export default function Profile() {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const { user, login } = useContext(AuthContext);
   const toast = useToast();

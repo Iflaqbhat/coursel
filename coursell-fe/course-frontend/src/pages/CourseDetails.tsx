@@ -11,7 +11,6 @@ import {
   Badge,
   Image,
   Grid,
-  GridItem,
   Card,
   CardBody,
   CardHeader,
@@ -27,7 +26,6 @@ import {
   AlertIcon,
   List,
   ListItem,
-  ListIcon,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -35,11 +33,6 @@ import {
   ModalBody,
   ModalCloseButton,
   useDisclosure,
-  Progress,
-  Stat,
-  StatLabel,
-  StatNumber,
-  StatHelpText,
   useColorModeValue,
 } from '@chakra-ui/react';
 import { 
@@ -57,7 +50,6 @@ import {
   FiAward
 } from 'react-icons/fi';
 import axios from 'axios';
-import { StarIcon } from '@chakra-ui/icons';
 import { AuthContext } from '../context/AuthContext';
 
 interface Video {

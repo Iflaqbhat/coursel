@@ -7,7 +7,6 @@ import {
   FormLabel, 
   Heading, 
   Input, 
-  Stack, 
   useToast,
   Text,
   VStack,
@@ -24,7 +23,7 @@ import {
   Spinner
 } from '@chakra-ui/react';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
-import { FiShield, FiLock, FiUser, FiMail } from 'react-icons/fi';
+import { FiShield, FiLock, FiMail } from 'react-icons/fi';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';

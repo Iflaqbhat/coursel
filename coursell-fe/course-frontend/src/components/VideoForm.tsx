@@ -25,7 +25,7 @@ import {
   NumberDecrementStepper,
 } from '@chakra-ui/react';
 import { useState } from 'react';
-import { FiPlay, FiTrash2, FiEdit2, FiPlus, FiClock } from 'react-icons/fi';
+import { FiEdit2, FiTrash2, FiPlus, FiClock } from 'react-icons/fi';
 
 interface Video {
   _id?: string;

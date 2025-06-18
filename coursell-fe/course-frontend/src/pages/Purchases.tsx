@@ -9,7 +9,13 @@ interface Course {
   description: string;
   price: number;
   imageLink: string;
-  creator: string;
+  published: boolean;
+  creator?: string;
+  category?: string;
+  level?: string;
+  rating?: number;
+  enrolledStudents?: number;
+  duration?: number;
 }
 
 const Purchases = () => {

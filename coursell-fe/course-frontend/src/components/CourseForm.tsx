@@ -17,7 +17,6 @@ import {
   Heading,
   Divider,
   Badge,
-  Icon,
   Flex,
   Tabs,
   TabList,
@@ -26,7 +25,6 @@ import {
   TabPanel,
 } from '@chakra-ui/react';
 import { useState } from 'react';
-import { FiBook, FiDollarSign, FiImage, FiGlobe, FiBarChart, FiPlay } from 'react-icons/fi';
 import VideoForm from './VideoForm';
 
 interface Video {

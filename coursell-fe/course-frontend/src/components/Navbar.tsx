@@ -11,7 +11,6 @@ import {
   Icon,
   Link,
   useColorModeValue,
-  useBreakpointValue,
   useDisclosure,
   HStack,
   Avatar,
@@ -29,14 +28,11 @@ import { keyframes } from '@emotion/react'
 import {
   HamburgerIcon,
   CloseIcon,
-  ChevronDownIcon,
 } from '@chakra-ui/icons'
 import { 
   FiBookOpen, 
   FiUser, 
   FiLogOut, 
-  FiSettings, 
-  FiShield,
   FiHome,
   FiPlay,
   FiAward,
