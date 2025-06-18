@@ -226,7 +226,7 @@ const VideoForm = ({ videos, onVideosChange, isLoading = false }: VideoFormProps
                 Current Videos ({videos.length})
               </Text>
               <VStack spacing={3} align="stretch">
-                {videos.map((video, index) => (
+                {videos.map((video) => (
                   <Card key={video._id} variant="outline" size="sm">
                     <CardBody p={4}>
                       <Flex justify="space-between" align="center">

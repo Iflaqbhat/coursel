@@ -118,7 +118,7 @@ export default function Profile() {
         updateData.newPassword = newPassword;
       }
 
-      const response = await axios.put('/api/user/profile', updateData, {
+      await axios.put('/api/user/profile', updateData, {
         headers: { Authorization: `Bearer ${token}` }
       });
 

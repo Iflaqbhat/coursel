@@ -7,7 +7,6 @@ import {
   FormLabel, 
   Heading, 
   Input, 
-  Stack, 
   useToast,
   Text,
   VStack,
@@ -24,7 +23,7 @@ import {
   Spinner
 } from '@chakra-ui/react';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
-import { FiUser, FiMail } from 'react-icons/fi';
+import { FiUser, FiMail, FiZap, FiLock } from 'react-icons/fi';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
@@ -47,7 +46,7 @@ export default function Register() {
     setError('');
 
     try {
-      const res = await axios.post('/api/user/signup', { 
+      await axios.post('/api/user/signup', { 
         firstName, 
         lastName, 
         email, 

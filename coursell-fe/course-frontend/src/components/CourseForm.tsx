@@ -26,6 +26,7 @@ import {
 } from '@chakra-ui/react';
 import { useState } from 'react';
 import VideoForm from './VideoForm';
+import { FiBook, FiImage, FiDollarSign, FiGlobe, FiBarChart } from 'react-icons/fi';
 
 interface Video {
   _id?: string;

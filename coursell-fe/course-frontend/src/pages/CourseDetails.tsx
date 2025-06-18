@@ -81,7 +81,6 @@ export default function CourseDetails() {
   const { id: paramId } = useParams();
   const id = paramId;
   const { user, isAdmin } = useContext(AuthContext);
-  const navigate = useNavigate();
   const [course, setCourse] = useState<Course | null>(null);
   const [loading, setLoading] = useState(true);
   const [purchasing, setPurchasing] = useState(false);

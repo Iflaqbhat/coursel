@@ -13,7 +13,11 @@ import {
   CardBody,
   Badge,
   Image,
-  SimpleGrid
+  SimpleGrid,
+  Stat,
+  StatLabel,
+  StatNumber,
+  StatHelpText
 } from '@chakra-ui/react'
 import { Link as RouterLink } from 'react-router-dom'
 import { useContext } from 'react'
@@ -42,8 +46,6 @@ export default function Home() {
     'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)',
     'linear-gradient(135deg, #1A202C 0%, #2D3748 100%)'
   )
-  const cardBg = useColorModeValue('white', 'gray.700')
-  const textColor = useColorModeValue('gray.800', 'whiteAlpha.900')
   const subTextColor = useColorModeValue('gray.600', 'gray.300')
   const headingColor = useColorModeValue('gray.800', 'white')
 

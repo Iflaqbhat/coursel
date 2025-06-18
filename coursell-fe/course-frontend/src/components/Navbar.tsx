@@ -1,8 +1,9 @@
-import { useState, useContext } from 'react'
+import { useContext } from 'react'
 import { Link as RouterLink } from 'react-router-dom'
 import {
   Box,
   Flex,
+  
   Text,
   IconButton,
   Button,
@@ -36,7 +37,8 @@ import {
   FiHome,
   FiPlay,
   FiAward,
-  FiZap
+  FiZap,
+  FiShield,
 } from 'react-icons/fi'
 import { AuthContext } from '../context/AuthContext'
 
