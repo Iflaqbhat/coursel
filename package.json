@@ -1,0 +1,50 @@
+{
+  "name": "coursell",
+  "version": "1.0.0",
+  "description": "Modern learning platform built with React, TypeScript, Node.js, and MongoDB",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd coursell-be && npm run dev",
+    "dev:frontend": "cd coursell-fe/course-frontend && npm run dev",
+    "install:all": "npm install && cd coursell-be && npm install && cd ../coursell-fe/course-frontend && npm install",
+    "build": "cd coursell-fe/course-frontend && npm run build",
+    "start": "cd coursell-be && npm start",
+    "test": "npm run test:backend && npm run test:frontend",
+    "test:backend": "cd coursell-be && npm test",
+    "test:frontend": "cd coursell-fe/course-frontend && npm test",
+    "lint": "npm run lint:backend && npm run lint:frontend",
+    "lint:backend": "cd coursell-be && npm run lint",
+    "lint:frontend": "cd coursell-fe/course-frontend && npm run lint",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
+    "setup": "npm run install:all && echo 'Setup complete! Make sure to create .env file in coursell-be directory.'"
+  },
+  "keywords": [
+    "learning",
+    "education",
+    "courses",
+    "react",
+    "typescript",
+    "nodejs",
+    "mongodb",
+    "chakra-ui"
+  ],
+  "author": "Coursell Team",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "prettier": "^3.1.1"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/coursell.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/coursell/issues"
+  },
+  "homepage": "https://github.com/your-username/coursell#readme"
+} 
