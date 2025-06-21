@@ -14,6 +14,7 @@ const app = express();
 app.set('trust proxy', 1);
 
 // Force redeployment - Render deployment fix
+// Version 2.0 - Complete backend fix for Render deployment
 
 // Security middleware
 app.use(helmet({
@@ -73,9 +74,10 @@ app.get('/health', (req, res) => {
 // Root endpoint
 app.get('/', (req, res) => {
   res.status(200).json({ 
-    message: 'CourseLL API is running',
-    version: '1.0.0',
+    message: 'CourseLL API is running - Version 2.0',
+    version: '2.0.0',
     timestamp: new Date().toISOString(),
+    deployment: 'Render - Fixed',
     endpoints: {
       health: '/health',
       api: '/api',
