@@ -20,10 +20,12 @@ import {
   Divider,
   Alert,
   AlertIcon,
-  Spinner
+  Spinner,
+  Badge,
+  SimpleGrid
 } from '@chakra-ui/react';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
-import { FiShield, FiLock, FiUser } from 'react-icons/fi';
+import { FiShield, FiLock, FiUser, FiKey } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
@@ -37,6 +39,24 @@ function AdminLogin() {
   const toast = useToast();
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
+
+  // Admin credentials
+  const adminCredentials = [
+    { username: 'admin', password: 'admin123', label: 'Default Admin' },
+    { username: 'ifuubhat72@gmail.com', password: 'iflak@123', label: 'Custom Admin' }
+  ];
+
+  const fillCredentials = (cred: { username: string; password: string; label: string }) => {
+    setUsername(cred.username);
+    setPassword(cred.password);
+    toast({
+      title: 'Credentials filled!',
+      description: `Using ${cred.label} credentials`,
+      status: 'info',
+      duration: 2000,
+      isClosable: true
+    });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -128,6 +148,40 @@ function AdminLogin() {
                   </Alert>
                 )}
 
+                {/* Quick Login Buttons */}
+                <Box w="full">
+                  <Text fontSize="sm" color="gray.600" mb={3} fontWeight="medium">
+                    Quick Login (Click to fill credentials):
+                  </Text>
+                  <SimpleGrid columns={2} spacing={3}>
+                    {adminCredentials.map((cred, index) => (
+                      <Button
+                        key={index}
+                        size="sm"
+                        variant="outline"
+                        colorScheme="purple"
+                        leftIcon={<FiKey />}
+                        onClick={() => fillCredentials(cred)}
+                        _hover={{
+                          bg: 'purple.50',
+                          borderColor: 'purple.300'
+                        }}
+                      >
+                        <VStack spacing={0} align="start">
+                          <Text fontSize="xs" fontWeight="bold">
+                            {cred.label}
+                          </Text>
+                          <Text fontSize="xs" color="gray.500">
+                            {cred.username}
+                          </Text>
+                        </VStack>
+                      </Button>
+                    ))}
+                  </SimpleGrid>
+                </Box>
+
+                <Divider />
+
                 <FormControl isRequired>
                   <FormLabel color="gray.700" fontWeight="medium">
                     Username
@@ -136,7 +190,7 @@ function AdminLogin() {
                     <Input
                       value={username}
                       onChange={e => setUsername(e.target.value)}
-                      placeholder="Enter your username"
+                      placeholder="admin or ifuubhat72@gmail.com"
                       size="lg"
                       bg="gray.50"
                       border="2px"
@@ -165,7 +219,7 @@ function AdminLogin() {
                       type={showPassword ? 'text' : 'password'}
                       value={password}
                       onChange={e => setPassword(e.target.value)}
-                      placeholder="Enter your password"
+                      placeholder="admin123 or iflak@123"
                       size="lg"
                       bg="gray.50"
                       border="2px"
@@ -216,9 +270,28 @@ function AdminLogin() {
 
                 <Divider />
 
-                <Text fontSize="sm" color="gray.500" textAlign="center">
-                  Secure admin access only. Contact system administrator for credentials.
-                </Text>
+                <VStack spacing={2}>
+                  <Text fontSize="sm" color="gray.500" textAlign="center">
+                    Available Admin Credentials:
+                  </Text>
+                  <VStack spacing={1} w="full">
+                    {adminCredentials.map((cred, index) => (
+                      <HStack key={index} w="full" justify="space-between" bg="gray.50" p={2} borderRadius="md">
+                        <VStack align="start" spacing={0}>
+                          <Badge colorScheme="purple" fontSize="xs">
+                            {cred.label}
+                          </Badge>
+                          <Text fontSize="xs" color="gray.600">
+                            {cred.username}
+                          </Text>
+                        </VStack>
+                        <Text fontSize="xs" color="gray.500" fontFamily="mono">
+                          {cred.password}
+                        </Text>
+                      </HStack>
+                    ))}
+                  </VStack>
+                </VStack>
               </VStack>
             </form>
           </CardBody>

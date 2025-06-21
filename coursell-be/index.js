@@ -1,13 +1,5 @@
 require('dotenv').config();
 
-// Debug: Check if environment variables are loaded
-console.log('=== ENVIRONMENT VARIABLES DEBUG ===');
-console.log('MONGO_URL:', process.env.MONGO_URL);
-console.log('PORT:', process.env.PORT);
-console.log('NODE_ENV:', process.env.NODE_ENV);
-console.log('FRONTEND_URL:', process.env.FRONTEND_URL);
-console.log('===================================');
-
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
