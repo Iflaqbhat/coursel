@@ -13,11 +13,26 @@ import {
 import { ChevronRightIcon } from '@chakra-ui/icons';
 import CourseForm from "../components/CourseForm";
 import { createCourse } from "../services/api";
+import { useContext, useEffect } from 'react';
+import { AuthContext } from '../context/AuthContext';
 
 const CreateCourse = () => {
   const navigate = useNavigate();
   const toast = useToast();
-  const token = localStorage.getItem("adminToken");
+  const { user, isAdmin } = useContext(AuthContext);
+
+  useEffect(() => {
+    if (!user || !isAdmin) {
+      toast({
+        title: 'Authentication Required',
+        description: 'Please log in as admin to create courses',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+      navigate("/admin/login");
+    }
+  }, [user, isAdmin, navigate, toast]);
 
   const handleSubmit = async (data: {
     title: string;
@@ -35,7 +50,7 @@ const CreateCourse = () => {
       order: number;
     }>;
   }) => {
-    if (!token) {
+    if (!user || !isAdmin) {
       toast({
         title: 'Authentication Required',
         description: 'Please log in as admin to create courses',

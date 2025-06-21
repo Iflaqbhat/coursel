@@ -441,17 +441,41 @@ export default function CourseDetails() {
                         {isAdmin ? 'Admin Access' : 'Purchased!'}
                       </Button>
                     ) : (
-                      <Button
-                        colorScheme="purple"
-                        size="lg"
-                        w="full"
-                        leftIcon={<FiDollarSign />}
-                        onClick={openPurchaseModal}
-                        isLoading={purchasing}
-                        loadingText="Processing..."
-                      >
-                        {user ? 'Purchase Course' : 'Login to Purchase'}
-                      </Button>
+                      user && user.role === 'user' ? (
+                        <Button
+                          colorScheme="purple"
+                          size="lg"
+                          w="full"
+                          leftIcon={<FiDollarSign />}
+                          onClick={openPurchaseModal}
+                          isLoading={purchasing}
+                          loadingText="Processing..."
+                        >
+                          Purchase Course
+                        </Button>
+                      ) : isAdmin ? (
+                        <Button
+                          colorScheme="green"
+                          size="lg"
+                          w="full"
+                          leftIcon={<FiCheck />}
+                          isDisabled
+                        >
+                          Admin Access
+                        </Button>
+                      ) : (
+                        <Button
+                          colorScheme="purple"
+                          size="lg"
+                          w="full"
+                          leftIcon={<FiDollarSign />}
+                          onClick={openPurchaseModal}
+                          isLoading={purchasing}
+                          loadingText="Processing..."
+                        >
+                          Login to Purchase
+                        </Button>
+                      )
                     )}
 
                     <Divider borderColor={dividerColor} />
