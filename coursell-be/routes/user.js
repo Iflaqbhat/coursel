@@ -99,20 +99,32 @@ router.put("/profile", userAuth, async (req, res) => {
       updateData.password = await bcrypt.hash(updateData.password, 10); // Hash new password
     }
 
-    const user = await User.findByIdAndUpdate(req.user._id, {
-      email: updateData.email, // Explicitly update email
-      firstName: updateData.firstName, // Explicitly update firstName
-      lastName: updateData.lastName,   // Explicitly update lastName
-      name: `${updateData.firstName} ${updateData.lastName}`.trim(), // Update combined name
-      ...(updateData.password && { password: updateData.password })
-    }, {
+    // Only update provided fields
+    const updateFields = {};
+    if (updateData.email) updateFields.email = updateData.email;
+    if (updateData.firstName) updateFields.firstName = updateData.firstName;
+    if (updateData.lastName) updateFields.lastName = updateData.lastName;
+    if (updateData.firstName || updateData.lastName) {
+      updateFields.name = `${updateData.firstName || ''} ${updateData.lastName || ''}`.trim();
+    }
+    if (updateData.password) updateFields.password = updateData.password;
+
+    const user = await User.findByIdAndUpdate(req.user._id, updateFields, {
       new: true,
       select: "-password", // Exclude password from response
     });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    res.json({ message: "Profile updated", user });
+    res.json({ message: "Profile updated", user: {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      role: 'user',
+      createdAt: user.createdAt
+    }});
   } catch (err) {
     console.error("Profile update error:", err);
     res.status(500).json({ message: "Internal server error" });
@@ -125,7 +137,28 @@ router.get("/purchases", userAuth, async (req, res) => {
     const purchases = await Purchase.find({ userId: req.user._id }).populate(
       "courseId"
     );
-    const courses = purchases.map((purchase) => purchase.courseId);
+    const courses = purchases.map((purchase) => {
+      const c = purchase.courseId;
+      if (!c) return null;
+      return {
+        _id: c._id,
+        id: c._id,
+        title: c.title,
+        description: c.description,
+        thumbnail: c.thumbnail || c.imageLink || '',
+        imageLink: c.imageLink || c.thumbnail || '',
+        category: c.category || '',
+        level: c.level || '',
+        duration: c.duration || '',
+        videos: c.videos || [],
+        price: c.price,
+        published: c.published,
+        creator: c.creatorId || '',
+        enrolledStudents: c.enrolledStudents || [],
+        rating: c.rating || 4.5,
+        createdAt: c.createdAt,
+      };
+    }).filter(Boolean);
     res.json({ message: "Purchased courses", courses });
   } catch (err) {
     console.error("Fetch purchases error:", err);
