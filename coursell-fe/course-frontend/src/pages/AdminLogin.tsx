@@ -50,8 +50,7 @@ function AdminLogin() {
     setUsername(cred.username);
     setPassword(cred.password);
     toast({
-      title: 'Credentials filled!',
-      description: `Using ${cred.label} credentials`,
+      title: `Using ${cred.label} credentials`,
       status: 'info',
       duration: 2000,
       isClosable: true
