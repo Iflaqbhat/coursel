@@ -110,7 +110,7 @@ export default function CourseDetails() {
   const fetchCourse = async () => {
     try {
       const headers = user ? { Authorization: `Bearer ${localStorage.getItem('token')}` } : {};
-      const response = await axios.get(`/api/courses/${id}`, { headers });
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/courses/${id}`, { headers });
       
       setCourse(response.data.course);
       // Admins have access to all courses
@@ -128,7 +128,7 @@ export default function CourseDetails() {
 
   const fetchRelatedCourses = async () => {
     try {
-      const response = await axios.get('/api/courses');
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/courses`);
       // Exclude the current course
       setRelatedCourses(response.data.filter((c: Course) => c._id !== id));
     } catch (error) {

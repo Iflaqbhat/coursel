@@ -27,6 +27,8 @@ import {
 import { FiSearch, FiStar, FiUsers, FiClock, FiPlay } from 'react-icons/fi';
 // import axios from 'axios';
 import { getAdminCoursesBulk } from '../services/api';
+import { AuthContext } from '../context/AuthContext';
+import { useContext } from 'react';
 
 interface Course {
   id: string;
@@ -42,6 +44,7 @@ interface Course {
 }
 
 export default function Courses() {
+  const { isAdmin } = useContext(AuthContext);
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -108,6 +111,14 @@ export default function Courses() {
   return (
     <Box bg="gray.50" minH="100vh" py={12}>
       <Container maxW="7xl">
+        {/* Admin Add Course Button */}
+        {isAdmin && (
+          <Flex justify="flex-end" mb={4}>
+            <Button as={RouterLink} to="/admin/create-course" colorScheme="purple" size="md">
+              Add Course
+            </Button>
+          </Flex>
+        )}
         {/* Header */}
         <VStack spacing={8} mb={12} textAlign="center">
           <Heading size="2xl" color="gray.800" fontWeight="bold">

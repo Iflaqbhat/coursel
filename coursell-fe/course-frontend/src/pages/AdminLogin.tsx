@@ -42,8 +42,7 @@ function AdminLogin() {
 
   // Admin credentials
   const adminCredentials = [
-    { username: 'admin', password: 'admin123', label: 'Default Admin' },
-    { username: 'ifuubhat72@gmail.com', password: 'iflak@123', label: 'Custom Admin' }
+    { username: 'admin', password: 'admin123', label: 'Default Admin' }
   ];
 
   const fillCredentials = (cred: { username: string; password: string; label: string }) => {
