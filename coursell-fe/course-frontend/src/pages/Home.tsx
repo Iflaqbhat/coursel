@@ -41,7 +41,7 @@ const featureImages = [
 ];
 
 export default function Home() {
-  const { user, isAdmin } = useContext(AuthContext)
+  const { isAdmin } = useContext(AuthContext)
   const subTextColor = useColorModeValue('gray.600', 'gray.300')
   const headingColor = useColorModeValue('gray.800', 'white')
 
