@@ -114,7 +114,8 @@ export default function AdminDashboard() {
     imageLink: '',
     published: true,
     category: 'programming',
-    level: 'beginner'
+    level: 'beginner',
+    videos: []
   });
 
   const [newVideo, setNewVideo] = useState({
@@ -169,7 +170,7 @@ export default function AdminDashboard() {
         duration: 3000
       });
       onClose();
-      setNewCourse({ title: '', description: '', price: 0, imageLink: '', published: true, category: 'programming', level: 'beginner' });
+      setNewCourse({ title: '', description: '', price: 0, imageLink: '', published: true, category: 'programming', level: 'beginner', videos: [] });
       fetchCourses();
     } catch (error: any) {
       toast({
