@@ -63,37 +63,17 @@ router.post("/signin", async (req, res) => {
   }
 });
 
-// Create new course (protected)
+// Create a new course (admin only)
 router.post("/course", adminAuth, async (req, res) => {
   try {
-    const { title, description, price, imageLink, published, category, level } = req.body;
-    
-    // Validate required fields
-    if (!title || !description || !price || !imageLink) {
-      return res.status(400).json({ 
-        message: "Missing required fields: title, description, price, and imageLink are required" 
-      });
-    }
-
-    const courseData = {
-      title: title.trim(),
-      description: description.trim(),
-      price: Number(price),
-      thumbnail: imageLink, // Map imageLink to thumbnail
-      imageLink: imageLink, // Also keep imageLink for compatibility
-      published: published ?? true,
-      category: category || 'programming',
-      level: level || 'beginner',
-      creatorId: req.admin._id,
-      videos: [], // Initialize empty videos array
-      enrolledStudents: [], // Initialize empty students array
-    };
-    
-    const newCourse = await Course.create(courseData);
-    res.json({ message: "Course created", courseId: newCourse._id });
-  } catch (err) {
-    console.error("Course create error:", err);
-    res.status(500).json({ message: "Internal server error" });
+    const course = new Course({
+      ...req.body,
+      creatorId: req.admin._id
+    });
+    await course.save();
+    res.status(201).json(course);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
   }
 });
 
