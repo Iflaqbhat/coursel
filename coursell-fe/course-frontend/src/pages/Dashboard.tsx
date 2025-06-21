@@ -61,7 +61,7 @@ export default function Dashboard() {
   const fetchPurchasedCourses = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('/api/user/purchases', {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/user/purchases`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setPurchasedCourses(response.data.courses || []);

@@ -118,7 +118,7 @@ export default function Profile() {
         updateData.newPassword = newPassword;
       }
 
-      await axios.put('/api/user/profile', updateData, {
+      await axios.put(`${import.meta.env.VITE_API_URL}/api/user/profile`, updateData, {
         headers: { Authorization: `Bearer ${token}` }
       });
 

@@ -223,7 +223,7 @@ export default function AdminDashboard() {
   const handleDeleteCourse = async (courseId: string) => {
     if (window.confirm('Are you sure you want to delete this course?')) {
       try {
-        await axios.delete(`/api/admin/course/${courseId}`);
+        await axios.delete(`${import.meta.env.VITE_API_URL}/api/admin/course/${courseId}`);
         toast({
           title: 'Course deleted successfully!',
           status: 'success',
