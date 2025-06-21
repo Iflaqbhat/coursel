@@ -84,9 +84,11 @@ const errorHandler = (err, req, res, next) => {
 
 // 404 handler
 const notFound = (req, res, next) => {
-  const error = new Error(`Not Found - ${req.originalUrl}`);
-  res.status(404);
-  next(error);
+  res.status(404).json({
+    success: false,
+    error: `Not Found - ${req.originalUrl}`,
+    message: 'The requested resource was not found on this server'
+  });
 };
 
 // Async error wrapper

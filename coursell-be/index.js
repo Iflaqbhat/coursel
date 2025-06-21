@@ -10,6 +10,9 @@ const { errorHandler, notFound, logger } = require("./middleware/errorHandler");
 
 const app = express();
 
+// Trust proxy for Render deployment
+app.set('trust proxy', 1);
+
 // Security middleware
 app.use(helmet({
   contentSecurityPolicy: {
@@ -62,6 +65,23 @@ app.get('/health', (req, res) => {
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
     environment: process.env.NODE_ENV
+  });
+});
+
+// Root endpoint
+app.get('/', (req, res) => {
+  res.status(200).json({ 
+    message: 'CourseLL API is running',
+    version: '1.0.0',
+    timestamp: new Date().toISOString(),
+    endpoints: {
+      health: '/health',
+      api: '/api',
+      user: '/api/user',
+      courses: '/api/courses',
+      admin: '/api/admin',
+      purchase: '/api/purchase'
+    }
   });
 });
 
