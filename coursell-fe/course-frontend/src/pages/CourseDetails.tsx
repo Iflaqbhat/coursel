@@ -149,7 +149,7 @@ export default function CourseDetails() {
 
     setPurchasing(true);
     try {
-      await axios.post(`/api/purchase/course/${id}`, {}, {
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/purchase/course/${id}`, {}, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
       
@@ -261,12 +261,12 @@ export default function CourseDetails() {
                 position="relative"
               >
                 <Image
-                  src={course.imageLink || 'https://via.placeholder.com/800x400?text=Course+Image'}
+                  src={course.imageLink || '/fallback-course.png'}
                   alt={course.title}
                   width="100%"
                   height="100%"
                   objectFit="cover"
-                  fallbackSrc="https://via.placeholder.com/800x400?text=Course+Image"
+                  fallbackSrc="/fallback-course.png"
                 />
                 <Badge
                   position="absolute"
@@ -387,7 +387,7 @@ export default function CourseDetails() {
               <Card bg={cardBg} borderRadius="2xl" boxShadow="xl">
                 <CardHeader>
                   <HStack spacing={4}>
-                    <Avatar name="Jane Doe" src="https://via.placeholder.com/150" size="lg" />
+                    <Avatar name="Jane Doe" src="/fallback-avatar.png" size="lg" />
                     <VStack align="start" spacing={1}>
                       <Heading size="md" color={headingColor}>
                         About the Instructor
@@ -496,7 +496,7 @@ export default function CourseDetails() {
                           transition="all 0.2s"
                         >
                           <Image
-                            src={rc.imageLink || 'https://via.placeholder.com/80x50?text=Related'}
+                            src={rc.imageLink || '/fallback-course.png'}
                             alt={rc.title}
                             boxSize="50px"
                             borderRadius="md"

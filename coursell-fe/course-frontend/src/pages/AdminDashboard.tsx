@@ -197,7 +197,7 @@ export default function AdminDashboard() {
       
       const updatedVideos = [...currentVideos, newVideoData];
       
-      await axios.post(`/api/admin/course/${selectedCourse._id}/videos`, {
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/admin/course/${selectedCourse._id}/videos`, {
         videos: updatedVideos
       });
       

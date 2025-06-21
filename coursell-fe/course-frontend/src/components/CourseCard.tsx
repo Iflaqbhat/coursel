@@ -119,8 +119,8 @@ const CourseCard = ({ course, onPurchase, isPurchased = false, isLoading = false
       {/* Course Image */}
       <Box position="relative" overflow="hidden">
         <Image
-          src={course.imageLink || 'https://via.placeholder.com/400x250?text=Course+Image'}
-        alt={course.title}
+          src={course.imageLink || '/fallback-course.png'}
+          alt={course.title}
           w="full"
           h="200px"
           objectFit="cover"

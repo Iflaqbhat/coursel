@@ -186,12 +186,12 @@ export default function Courses() {
                 {/* Course Image */}
                 <Box position="relative" height="200px">
                   <Image
-                    src={course.imageLink || 'https://via.placeholder.com/400x200?text=Course+Image'}
+                    src={course.imageLink || '/fallback-course.png'}
                     alt={course.title}
                     width="100%"
                     height="100%"
                     objectFit="cover"
-                    fallbackSrc="https://via.placeholder.com/400x200?text=Course+Image"
+                    fallbackSrc="/fallback-course.png"
                   />
                   <Badge
                     position="absolute"

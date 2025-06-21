@@ -293,7 +293,7 @@ export default function Navbar() {
                     <Avatar
                       size={'md'}
                       name={user.name}
-                      src={user.role === 'admin' ? 'https://via.placeholder.com/150/805ad4/FFFFFF?text=A' : 'https://via.placeholder.com/150/4f46e5/FFFFFF?text=U'}
+                      src={user.role === 'admin' ? '/fallback-avatar-admin.png' : '/fallback-avatar-user.svg'}
                       bg={user.role === 'admin' ? 'linear-gradient(135deg, #805ad4 0%, #6b46c1 100%)' : 'linear-gradient(135deg, #4f46e5 0%, #4338ca 100%)'}
                       color="white"
                       boxShadow="md"
