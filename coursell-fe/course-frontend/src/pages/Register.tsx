@@ -46,7 +46,7 @@ export default function Register() {
     setError('');
 
     try {
-      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/user/signup`, { 
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/user/signup`, { 
         firstName, 
         lastName, 
         email, 
@@ -54,7 +54,7 @@ export default function Register() {
       });
       
       // Auto-login after successful registration
-      const loginRes = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/user/signin`, { email, password });
+      const loginRes = await axios.post(`${import.meta.env.VITE_API_URL}/api/user/signin`, { email, password });
       
       const user = {
         id: loginRes.data.userId || loginRes.data.user?.id,
