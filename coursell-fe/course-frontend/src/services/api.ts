@@ -46,7 +46,8 @@ export const adminSignUp = (data: { username: string; password: string }) =>
   api.post(`${import.meta.env.VITE_API_URL}/api/admin/signup`, data);
 export const adminSignIn = (data: { username: string; password: string }) =>
   api.post(`${import.meta.env.VITE_API_URL}/api/admin/signin`, data);
-export const getAdminCourses = () => api.get("/admin/courses");
+export const getAdminCourses = () => api.get(`${import.meta.env.VITE_API_URL}/api/admin/courses`);
+export const getAdminCoursesBulk = () => api.get(`${import.meta.env.VITE_API_URL}/api/admin/course/bulk`);
 export const createCourse = (data: {
   title: string;
   description: string;
@@ -62,7 +63,7 @@ export const createCourse = (data: {
     duration: number;
     order: number;
   }>;
-}) => api.post("/admin/course", data);
+}) => api.post(`${import.meta.env.VITE_API_URL}/api/admin/course`, data);
 export const updateCourse = (
   id: string,
   data: {
