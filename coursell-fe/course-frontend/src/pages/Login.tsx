@@ -44,7 +44,7 @@ export default function Login() {
     setError('');
 
     try {
-      const res = await axios.post('/api/user/signin', { email, password });
+      const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/user/signin`, { email, password });
       
       // Create user object from the response
       const user = {

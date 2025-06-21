@@ -63,7 +63,7 @@ function AdminLogin() {
     setError('');
 
     try {
-      const res = await axios.post('/api/admin/signin', { username, password });
+      const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/admin/signin`, { username, password });
       login(res.data.token, { 
         id: res.data.adminId, 
         name: username, 
