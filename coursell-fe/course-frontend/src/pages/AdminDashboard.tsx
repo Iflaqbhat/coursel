@@ -68,6 +68,7 @@ import {
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { getAdminCourses, createCourse } from '../services/api';
 
 interface Video {
   _id: string;
@@ -134,7 +135,7 @@ export default function AdminDashboard() {
 
   const fetchCourses = async () => {
     try {
-      const response = await axios.get('/api/admin/courses');
+      const response = await getAdminCourses();
       setCourses(response.data.courses);
       
       // Calculate stats
@@ -161,7 +162,7 @@ export default function AdminDashboard() {
 
   const handleCreateCourse = async () => {
     try {
-      await axios.post('/api/admin/course', newCourse);
+      await createCourse(newCourse);
       toast({
         title: 'Course created successfully!',
         status: 'success',

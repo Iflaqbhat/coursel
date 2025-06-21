@@ -26,6 +26,7 @@ import {
 } from '@chakra-ui/react';
 import { FiSearch, FiStar, FiUsers, FiClock, FiPlay } from 'react-icons/fi';
 import axios from 'axios';
+import { getAdminCoursesBulk } from '../services/api';
 
 interface Course {
   id: string;
@@ -53,7 +54,7 @@ export default function Courses() {
 
   const fetchCourses = async () => {
     try {
-      const response = await axios.get('/api/admin/course/bulk');
+      const response = await getAdminCoursesBulk();
       setCourses(response.data.courses);
     } catch (error) {
       toast({
