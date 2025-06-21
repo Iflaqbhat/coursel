@@ -41,7 +41,7 @@ const featureImages = [
 ];
 
 export default function Home() {
-  const { user } = useContext(AuthContext)
+  const { user, isAdmin } = useContext(AuthContext)
   const subTextColor = useColorModeValue('gray.600', 'gray.300')
   const headingColor = useColorModeValue('gray.800', 'white')
 
@@ -131,32 +131,48 @@ export default function Home() {
                 learn from industry experts, and advance your career with our 
                 comprehensive learning platform.
               </Text>
-              <HStack spacing={4} flexWrap="wrap">
+              {isAdmin ? (
                 <Button
                   as={RouterLink}
-                  to="/courses"
+                  to="/admin/create-course"
                   size="lg"
-                  variant="accent"
+                  colorScheme="purple"
                   leftIcon={<FiPlay />}
                   bgGradient="linear(to-r, purple.500, purple.700)"
                   color="white"
                   _hover={{ bgGradient: 'linear(to-r, purple.600, purple.800)', boxShadow: 'lg', transform: 'translateY(-2px)' }}
                   transition="all 0.2s"
                 >
-                  Explore Courses
+                  Add Course
                 </Button>
-                <Button
-                  as={RouterLink}
-                  to="/courses"
-                  size="lg"
-                  variant="outline"
-                  color="white"
-                  borderColor="purple.200"
-                  _hover={{ bg: 'purple.500', borderColor: 'purple.500' }}
-                >
-                  Get Started Free
-                </Button>
-              </HStack>
+              ) : (
+                <HStack spacing={4} flexWrap="wrap">
+                  <Button
+                    as={RouterLink}
+                    to="/courses"
+                    size="lg"
+                    variant="accent"
+                    leftIcon={<FiPlay />}
+                    bgGradient="linear(to-r, purple.500, purple.700)"
+                    color="white"
+                    _hover={{ bgGradient: 'linear(to-r, purple.600, purple.800)', boxShadow: 'lg', transform: 'translateY(-2px)' }}
+                    transition="all 0.2s"
+                  >
+                    Explore Courses
+                  </Button>
+                  <Button
+                    as={RouterLink}
+                    to="/courses"
+                    size="lg"
+                    variant="outline"
+                    color="white"
+                    borderColor="purple.200"
+                    _hover={{ bg: 'purple.500', borderColor: 'purple.500' }}
+                  >
+                    Get Started Free
+                  </Button>
+                </HStack>
+              )}
             </VStack>
             <Box position="relative">
               <Image
@@ -275,7 +291,7 @@ export default function Home() {
       </Box>
 
       {/* Call to Action Section */}
-      {!user ? (
+      {!isAdmin && (
         <Box bgGradient="linear(135deg, #4f46e5 0%, #7c3aed 100%)" color="white" py={20} textAlign="center">
           <Container maxW="4xl">
             <VStack spacing={6}>
@@ -298,45 +314,6 @@ export default function Home() {
               >
                 Sign Up Now
               </Button>
-            </VStack>
-          </Container>
-        </Box>
-      ) : (
-        <Box bgGradient="linear(135deg, #4f46e5 0%, #7c3aed 100%)" color="white" py={20} textAlign="center">
-          <Container maxW="4xl">
-            <VStack spacing={6}>
-              <Heading size="xl" fontWeight="bold">
-                Welcome back, {user.name ? user.name : user.email}!
-              </Heading>
-              <Text fontSize="lg" opacity={0.9}>
-                Continue your learning journey with our latest courses and track your progress.
-              </Text>
-              <HStack spacing={4} flexWrap="wrap" justify="center">
-                <Button
-                  as={RouterLink}
-                  to="/courses"
-                  size="lg"
-                  variant="accent"
-                  leftIcon={<FiPlay />}
-                  bgGradient="linear(to-r, purple.500, purple.700)"
-                  color="white"
-                  _hover={{ bgGradient: 'linear(to-r, purple.600, purple.800)', boxShadow: 'lg', transform: 'translateY(-2px)' }}
-                  transition="all 0.2s"
-                >
-                  Browse Courses
-                </Button>
-                <Button
-                  as={RouterLink}
-                  to="/dashboard"
-                  size="lg"
-                  variant="outline"
-                  color="white"
-                  borderColor="purple.200"
-                  _hover={{ bg: 'purple.500', borderColor: 'purple.500' }}
-                >
-                  My Dashboard
-                </Button>
-              </HStack>
             </VStack>
           </Container>
         </Box>
