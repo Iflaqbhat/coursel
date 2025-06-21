@@ -13,6 +13,8 @@ const app = express();
 // Trust proxy for Render deployment
 app.set('trust proxy', 1);
 
+// Force redeployment - Render deployment fix
+
 // Security middleware
 app.use(helmet({
   contentSecurityPolicy: {
