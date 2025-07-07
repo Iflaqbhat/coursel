@@ -24,8 +24,7 @@ import {
   Container,
   VStack,
   Tooltip,
-  Spinner,
-  Center
+  Spinner
 } from '@chakra-ui/react'
 import { keyframes } from '@emotion/react'
 import {
