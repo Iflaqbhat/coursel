@@ -86,13 +86,13 @@ const CreateCourse = () => {
 
   return (
     <Box minH="100vh" bg="gray.50" py={8}>
-      <Container maxW="4xl">
+      <Container maxW="4xl" px={{ base: 2, md: 8 }}>
         <VStack spacing={8} align="stretch">
           {/* Breadcrumb */}
           <Breadcrumb
             spacing="8px"
             separator={<ChevronRightIcon color="gray.500" />}
-            fontSize="sm"
+            fontSize={{ base: 'sm', md: 'md' }}
           >
             <BreadcrumbItem>
               <BreadcrumbLink href="/admin/dashboard">Dashboard</BreadcrumbLink>
@@ -103,17 +103,19 @@ const CreateCourse = () => {
           </Breadcrumb>
 
           {/* Header */}
-          <Box textAlign="center">
-            <Heading size="xl" color="purple.600" mb={2}>
+          <Box textAlign={{ base: 'center', md: 'left' }}>
+            <Heading size={{ base: 'lg', md: 'xl' }} color="purple.600" mb={2}>
               Create New Course
             </Heading>
-            <Text color="gray.600" fontSize="lg">
+            <Text color="gray.600" fontSize={{ base: 'md', md: 'lg' }}>
               Add a new course to your platform and start teaching students
             </Text>
           </Box>
 
           {/* Form */}
-          <CourseForm onSubmit={handleSubmit} />
+          <Box w="full">
+            <CourseForm onSubmit={handleSubmit} />
+          </Box>
         </VStack>
       </Container>
     </Box>

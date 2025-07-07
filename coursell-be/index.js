@@ -1,4 +1,5 @@
 require('dotenv').config();
+const config = require('./config/env');
 
 const express = require("express");
 const cors = require("cors");
@@ -30,8 +31,21 @@ app.use(helmet({
   },
 }));
 
+const isProduction = process.env.NODE_ENV === 'production';
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    if (!isProduction && /^http:\/\/localhost:\d+$/.test(origin)) {
+      // Allow all localhost ports in development
+      return callback(null, true);
+    }
+    // Allow only your production frontend in production
+    if (isProduction && origin === process.env.FRONTEND_URL) {
+      return callback(null, true);
+    }
+    return callback(new Error('Not allowed by CORS'));
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -60,6 +74,7 @@ if (process.env.NODE_ENV === 'development') {
 } else {
   app.use(morgan('combined'));
 }
+
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -110,7 +125,7 @@ app.use(errorHandler);
 // Connect to MongoDB
 const connectDB = async () => {
   try {
-    const mongoUrl = process.env.MONGO_URL;
+    const mongoUrl = config.mongoUrl;
     logger.info(`Attempting to connect to MongoDB: ${mongoUrl.replace(/\/\/.*@/, '//***:***@')}`);
     
     const conn = await mongoose.connect(mongoUrl, {
@@ -131,9 +146,9 @@ const startServer = async () => {
   try {
     await connectDB();
     
-    const PORT = process.env.PORT || 3001;
+    const PORT = config.port;
     const server = app.listen(PORT, () => {
-      logger.info(`Server is running on port ${PORT} in ${process.env.NODE_ENV} mode`);
+      logger.info(`Server is running on port ${PORT} in ${config.nodeEnv} mode`);
     });
 
     // Graceful shutdown

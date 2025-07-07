@@ -54,12 +54,34 @@ router.get("/:id", async (req, res) => {
     const token = req.header('Authorization')?.replace('Bearer ', '');
     
     let userId = null;
+    let isAdminUser = false;
     if (token) {
       try {
+        // Try user token first
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         userId = decoded.id;
+        // Check if user is admin
+        const User = require('../models/user');
+        const Admin = require('../db').Admin;
+        const user = await User.findById(userId);
+        if (user && user.role === 'admin') {
+          isAdminUser = true;
+        } else {
+          // Check admin collection
+          const admin = await Admin.findById(userId);
+          if (admin) {
+            isAdminUser = true;
+          }
+        }
       } catch (err) {
-        // Invalid token, continue without user
+        // If user token fails, try admin token
+        try {
+          const decoded = jwt.verify(token, process.env.JWT_SECRET_ADMIN || process.env.JWT_SECRET);
+          userId = decoded.id;
+          isAdminUser = true;
+        } catch (err2) {
+          // Not a valid admin token either
+        }
       }
     }
 
@@ -70,16 +92,21 @@ router.get("/:id", async (req, res) => {
 
     // Check if user has purchased the course
     let hasAccess = false;
-    if (userId) {
+    if (isAdminUser) {
+      hasAccess = true;
+    } else if (userId) {
       const purchase = await Purchase.findOne({ userId, courseId: id });
       hasAccess = !!purchase;
     }
 
-    // Remove videos if user hasn't purchased
+    // Remove videos if user hasn't purchased or is not admin
     const courseData = course.toObject();
     if (!hasAccess) {
       delete courseData.videos;
     }
+
+    // Add debug log
+    console.log('isAdminUser:', isAdminUser, 'userId:', userId, 'hasAccess:', hasAccess);
 
     // Ensure imageLink is available (map from thumbnail if needed)
     if (!courseData.imageLink && courseData.thumbnail) {

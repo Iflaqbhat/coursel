@@ -110,7 +110,7 @@ export default function Courses() {
 
   return (
     <Box bg="gray.50" minH="100vh" py={12}>
-      <Container maxW="7xl">
+      <Container maxW="7xl" py={8} px={{ base: 2, md: 8 }}>
         {/* Admin Add Course Button */}
         {isAdmin && (
           <Flex justify="flex-end" mb={4}>
@@ -120,9 +120,9 @@ export default function Courses() {
           </Flex>
         )}
         {/* Header */}
-        <VStack spacing={8} mb={12} textAlign="center">
-          <Heading size="2xl" color="gray.800" fontWeight="bold">
-            Discover Amazing Courses
+        <VStack spacing={8} align="stretch">
+          <Heading size={{ base: 'lg', md: '2xl' }} color="purple.700" textAlign={{ base: 'center', md: 'left' }}>
+            Explore Courses
           </Heading>
           <Text fontSize="lg" color="gray.600" maxW="2xl">
             Learn from industry experts and master new skills with our comprehensive course collection
@@ -169,7 +169,7 @@ export default function Courses() {
             </Text>
           </Box>
         ) : (
-          <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={8}>
+          <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing={6}>
             {filteredCourses.map((course) => (
               <Card
                 key={course._id}

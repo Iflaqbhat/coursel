@@ -120,7 +120,7 @@ const CourseCard = ({ course, onPurchase, isPurchased = false, isLoading = false
       <Box position="relative" overflow="hidden">
         <Image
           src={course.imageLink || '/fallback-course.png'}
-          alt={course.title}
+        alt={course.title}
           w="full"
           h="200px"
           objectFit="cover"

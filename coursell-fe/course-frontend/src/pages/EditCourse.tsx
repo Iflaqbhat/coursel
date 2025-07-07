@@ -175,13 +175,13 @@ const EditCourse = () => {
 
   return (
     <Box minH="100vh" bg="gray.50" py={8}>
-      <Container maxW="4xl">
+      <Container maxW="4xl" px={{ base: 2, md: 8 }}>
         <VStack spacing={8} align="stretch">
           {/* Breadcrumb */}
           <Breadcrumb
             spacing="8px"
             separator={<ChevronRightIcon color="gray.500" />}
-            fontSize="sm"
+            fontSize={{ base: 'sm', md: 'md' }}
           >
             <BreadcrumbItem>
               <BreadcrumbLink href="/admin/dashboard">Dashboard</BreadcrumbLink>
@@ -195,17 +195,19 @@ const EditCourse = () => {
           </Breadcrumb>
 
           {/* Header */}
-          <Box textAlign="center">
-            <Heading size="xl" color="purple.600" mb={2}>
+          <Box textAlign={{ base: 'center', md: 'left' }}>
+            <Heading size={{ base: 'lg', md: 'xl' }} color="purple.600" mb={2}>
               Edit Course
             </Heading>
-            <Text color="gray.600" fontSize="lg">
-              Update course information and settings
+            <Text color="gray.600" fontSize={{ base: 'md', md: 'lg' }}>
+              Update your course details and content
             </Text>
           </Box>
 
           {/* Form */}
-          <CourseForm course={course} onSubmit={handleSubmit} />
+          <Box w="full">
+            <CourseForm onSubmit={handleSubmit} initialValues={course} />
+          </Box>
         </VStack>
       </Container>
     </Box>

@@ -34,6 +34,7 @@ import {
   ModalCloseButton,
   useDisclosure,
   useColorModeValue,
+  Spinner,
 } from '@chakra-ui/react';
 import { 
   FiBookOpen, 
@@ -57,7 +58,7 @@ interface Video {
   title: string;
   description: string;
   videoUrl: string;
-  duration: number;
+  duration?: number; // Now optional
   order: number;
 }
 
@@ -77,6 +78,12 @@ interface Course {
   level?: string;
 }
 
+// Helper to extract YouTube video ID
+function getYouTubeId(url: string) {
+  const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/))([\w-]{11})/);
+  return match ? match[1] : null;
+}
+
 export default function CourseDetails() {
   const { id: paramId } = useParams();
   const id = paramId;
@@ -89,6 +96,7 @@ export default function CourseDetails() {
   const toast = useToast();
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
   const [relatedCourses, setRelatedCourses] = useState<Course[]>([]);
+  const [videoLoading, setVideoLoading] = useState(false);
 
   // Color mode values
   const bgColor = useColorModeValue('gray.50', 'gray.900');
@@ -109,12 +117,16 @@ export default function CourseDetails() {
 
   const fetchCourse = async () => {
     try {
-      const headers = user ? { Authorization: `Bearer ${localStorage.getItem('token')}` } : {};
+      const adminToken = localStorage.getItem('adminToken');
+      const userToken = localStorage.getItem('token');
+      const headers = adminToken
+        ? { Authorization: `Bearer ${adminToken}` }
+        : userToken
+          ? { Authorization: `Bearer ${userToken}` }
+          : {};
       const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/courses/${id}`, { headers });
-      
       setCourse(response.data.course);
-      // Admins have access to all courses
-      setHasAccess(response.data.hasAccess || isAdmin);
+      setHasAccess(response.data.hasAccess || (adminToken ? true : false));
     } catch (error) {
       toast({
         title: 'Error fetching course',
@@ -225,15 +237,9 @@ export default function CourseDetails() {
     { icon: FiStar, label: 'Rating', value: `${course.rating || 4.5}/5` }
   ];
 
-  const formatDuration = (seconds: number) => {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    return `${hours}h ${minutes}m`;
-  };
-
   return (
     <Box bg={bgColor} minH="100vh" py={8}>
-      <Container maxW="7xl">
+      <Container maxW="7xl" px={{ base: 2, md: 8 }}>
         <VStack spacing={8} align="stretch">
           {/* Back Button */}
           <Button
@@ -241,9 +247,10 @@ export default function CourseDetails() {
             to="/courses"
             leftIcon={<FiArrowLeft />}
             variant="ghost"
-            alignSelf="start"
+            alignSelf={{ base: 'stretch', md: 'start' }}
             color={subTextColor}
             _hover={{ bg: 'gray.700' }}
+            mb={{ base: 2, md: 0 }}
           >
             Back to Courses
           </Button>
@@ -323,18 +330,18 @@ export default function CourseDetails() {
                 <Heading size="lg" color={headingColor}>
                   Course Content
                 </Heading>
-                <Text color={subTextColor}>
-                  {hasAccess ? (
-                    'Dive deep into the course material with these comprehensive videos:'
-                  ) : (
-                    <HStack>
-                      <Icon as={FiLock} color="orange.400" />
-                      <Text color="orange.400" fontWeight="semibold">
-                        Purchase this course to unlock all video content.
-                      </Text>
-                    </HStack>
-                  )}
-                </Text>
+                {hasAccess ? (
+                  <Text color={subTextColor}>
+                    Dive deep into the course material with these comprehensive videos:
+                  </Text>
+                ) : (
+                  <HStack>
+                    <Icon as={FiLock} color="orange.400" />
+                    <Text color="orange.400" fontWeight="semibold">
+                      Purchase this course to unlock all video content.
+                    </Text>
+                  </HStack>
+                )}
 
                 <List spacing={3} w="full">
                   {course.videos && course.videos.length > 0 ? (
@@ -350,7 +357,12 @@ export default function CourseDetails() {
                         shadow="sm"
                         _hover={hasAccess ? { bg: 'purple.100', cursor: 'pointer' } : {}}
                         transition="all 0.2s"
-                        onClick={() => hasAccess && setSelectedVideo(video)}
+                        onClick={() => {
+                          if (hasAccess) {
+                            setVideoLoading(true);
+                            setSelectedVideo(video);
+                          }
+                        }}
                       >
                         <HStack spacing={4} flex="1">
                           <Icon 
@@ -367,9 +379,7 @@ export default function CourseDetails() {
                             </Text>
                           </VStack>
                         </HStack>
-                        <Text fontSize="sm" color={subTextColor} ml={4}>
-                          {formatDuration(video.duration)}
-                        </Text>
+                        {/* Removed duration display here */}
                         {!hasAccess && (
                           <Icon as={FiLock} color="orange.400" ml={2} />
                         )}
@@ -410,16 +420,67 @@ export default function CourseDetails() {
                 <Box bg={cardBg} p={4} borderRadius="lg" boxShadow="md">
                   <Heading size="md" mb={2}>{selectedVideo.title}</Heading>
                   <Text mb={2}>{selectedVideo.description}</Text>
-                  <video width="100%" height="360" controls style={{ borderRadius: '8px' }}>
-                    <source src={selectedVideo.videoUrl} type="video/mp4" />
-                    Your browser does not support the video tag.
-                  </video>
+                  {/* Loader */}
+                  {videoLoading && (
+                    <Box w="100%" h="360px" display="flex" alignItems="center" justifyContent="center" bg="gray.800" borderRadius="8px" mb={4}>
+                      <Spinner size="xl" color="purple.400" thickness="4px" speed="0.65s" />
+                    </Box>
+                  )}
+                  {/* Enhanced video player logic: YouTube, Vimeo, or direct file */}
+                  {getYouTubeId(selectedVideo.videoUrl) ? (
+                    <Box as="iframe"
+                      width="100%"
+                      height="360"
+                      src={`https://www.youtube.com/embed/${getYouTubeId(selectedVideo.videoUrl)}`}
+                      title="YouTube video player"
+                      borderRadius="8px"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      style={{ border: 0, display: videoLoading ? 'none' : 'block' }}
+                      onLoad={() => setVideoLoading(false)}
+                      onLoadStart={() => setVideoLoading(true)}
+                    />
+                  ) : selectedVideo.videoUrl.includes('vimeo.com') ? (
+                    <Box as="iframe"
+                      width="100%"
+                      height="360"
+                      src={(() => {
+                        if (selectedVideo.videoUrl.includes('player.vimeo.com')) {
+                          return selectedVideo.videoUrl;
+                        }
+                        const match = selectedVideo.videoUrl.match(/vimeo\.com\/(\d+)/);
+                        if (match) {
+                          return `https://player.vimeo.com/video/${match[1]}`;
+                        }
+                        return selectedVideo.videoUrl;
+                      })()}
+                      title="Vimeo video player"
+                      borderRadius="8px"
+                      allow="autoplay; fullscreen; picture-in-picture"
+                      allowFullScreen
+                      style={{ border: 0, display: videoLoading ? 'none' : 'block' }}
+                      onLoad={() => setVideoLoading(false)}
+                      onLoadStart={() => setVideoLoading(true)}
+                    />
+                  ) : (
+                    <video
+                      width="100%"
+                      height="360"
+                      controls
+                      style={{ borderRadius: '8px', display: videoLoading ? 'none' : 'block' }}
+                      onLoadedData={() => setVideoLoading(false)}
+                      onLoadStart={() => setVideoLoading(true)}
+                    >
+                      <source src={selectedVideo.videoUrl} type="video/mp4" />
+                      Your browser does not support the video tag.
+                    </video>
+                  )}
                 </Box>
               )}
             </VStack>
 
             {/* Sidebar / Purchase Section */}
-            <VStack align="stretch" spacing={6}>
+            <VStack align="stretch" spacing={6} mt={{ base: 8, lg: 0 }}>
               <Card bg={cardBg} borderRadius="2xl" boxShadow="xl">
                 <CardBody p={6}>
                   <VStack spacing={4}>

@@ -241,6 +241,39 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleDeleteVideo = async (videoId: string) => {
+    if (!selectedCourse) return;
+    if (!window.confirm('Are you sure you want to delete this video?')) return;
+    try {
+      // Remove the video from the selected course's videos
+      const updatedVideos = (selectedCourse.videos || []).filter(v => v._id !== videoId);
+      // Reorder remaining videos
+      updatedVideos.forEach((video, idx) => {
+        video.order = idx + 1;
+      });
+      // Send updated videos to backend
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/admin/course/${selectedCourse._id}/videos`, {
+        videos: updatedVideos
+      });
+      toast({
+        title: 'Video deleted successfully!',
+        status: 'success',
+        duration: 3000
+      });
+      // Update selectedCourse immediately for instant UI update
+      setSelectedCourse({ ...selectedCourse, videos: updatedVideos });
+      // Optionally refresh courses in the background
+      fetchCourses();
+    } catch (error: any) {
+      toast({
+        title: 'Error deleting video',
+        description: error.response?.data?.message || 'Something went wrong',
+        status: 'error',
+        duration: 3000
+      });
+    }
+  };
+
   const handleLogout = () => {
     logout();
     navigate('/admin/login');
@@ -282,9 +315,9 @@ export default function AdminDashboard() {
         </Flex>
       </Box>
 
-      <Container maxW="7xl" py={8}>
+      <Container maxW="7xl" py={8} px={{ base: 2, md: 8 }}>
         {/* Stats Cards */}
-        <Grid templateColumns="repeat(auto-fit, minmax(250px, 1fr))" gap={6} mb={8}>
+        <Grid templateColumns={{ base: '1fr', sm: '1fr 1fr', md: 'repeat(auto-fit, minmax(250px, 1fr))' }} gap={6} mb={8}>
           <Card bg="gray.800" borderColor="gray.700">
             <CardBody>
               <Stat>
@@ -339,110 +372,108 @@ export default function AdminDashboard() {
         </Grid>
 
         {/* Actions */}
-        <Flex justify="space-between" align="center" mb={6}>
+        <Flex justify="space-between" align={{ base: 'start', md: 'center' }} mb={6} direction={{ base: 'column', md: 'row' }} gap={4}>
           <Heading size="md" color="white">Your Courses</Heading>
-          <Button
-            leftIcon={<FiPlus />}
-            colorScheme="blue"
-            onClick={onOpen}
-          >
+          <Button leftIcon={<FiPlus />} colorScheme="blue" onClick={onOpen} w={{ base: 'full', md: 'auto' }}>
             Create Course
           </Button>
         </Flex>
 
         {/* Courses Table */}
-        <Card bg="gray.800" borderColor="gray.700">
-          <CardHeader>
-            <Heading size="md" color="white">Course Management</Heading>
-          </CardHeader>
-          <CardBody>
-            {loading ? (
-              <Text color="gray.400">Loading courses...</Text>
-            ) : courses.length === 0 ? (
-              <Box textAlign="center" py={8}>
-                <Text color="gray.400" mb={4}>No courses yet</Text>
-                <Button colorScheme="blue" onClick={onOpen}>
-                  Create your first course
-                </Button>
-              </Box>
-            ) : (
-              <Table variant="simple" colorScheme="gray">
-                <Thead>
-                  <Tr>
-                    <Th color="gray.300">Course</Th>
-                    <Th color="gray.300">Price</Th>
-                    <Th color="gray.300">Status</Th>
-                    <Th color="gray.300">Students</Th>
-                    <Th color="gray.300">Videos</Th>
-                    <Th color="gray.300">Created</Th>
-                    <Th color="gray.300">Actions</Th>
-                  </Tr>
-                </Thead>
-                <Tbody>
-                  {courses.map((course) => (
-                    <Tr key={course._id}>
-                      <Td>
-                        <VStack align="start" spacing={1}>
-                          <Text fontWeight="medium" color="white">{course.title}</Text>
-                          <Text fontSize="sm" color="gray.400" noOfLines={2}>
-                            {course.description}
-                          </Text>
-                        </VStack>
-                      </Td>
-                      <Td color="white">${course.price}</Td>
-                      <Td>
-                        <Badge
-                          colorScheme={course.published ? 'green' : 'gray'}
-                        >
-                          {course.published ? 'Published' : 'Draft'}
-                        </Badge>
-                      </Td>
-                      <Td color="white">{course.enrolledStudents?.length || 0}</Td>
-                      <Td color="white">{course.videos?.length || 0}</Td>
-                      <Td color="gray.400">
-                        {new Date(course.createdAt).toLocaleDateString()}
-                      </Td>
-                      <Td>
-                        <HStack spacing={2}>
-                          <Button
-                            size="sm"
-                            colorScheme="blue"
-                            leftIcon={<FiVideo />}
-                            onClick={() => openVideoModal(course)}
-                          >
-                            Videos
-                          </Button>
-                          <Menu>
-                            <MenuButton
-                              as={IconButton}
-                              icon={<FiMoreVertical />}
-                              variant="ghost"
-                              size="sm"
-                              color="gray.300"
-                              _hover={{ bg: 'gray.700' }}
-                            />
-                            <MenuList bg="gray.800" borderColor="gray.700">
-                              <MenuItem icon={<FiEye />} _hover={{ bg: 'gray.700' }}>View</MenuItem>
-                              <MenuItem icon={<FiEdit />} _hover={{ bg: 'gray.700' }}>Edit</MenuItem>
-                              <MenuItem 
-                                icon={<FiTrash2 />} 
-                                color="red.400"
-                                onClick={() => handleDeleteCourse(course._id)}
-                                _hover={{ bg: 'gray.700' }}
-                              >
-                                Delete
-                              </MenuItem>
-                            </MenuList>
-                          </Menu>
-                        </HStack>
-                      </Td>
+        <Box overflowX={{ base: 'auto', md: 'visible' }}>
+          <Card bg="gray.800" borderColor="gray.700">
+            <CardHeader>
+              <Heading size="md" color="white">Course Management</Heading>
+            </CardHeader>
+            <CardBody>
+              {loading ? (
+                <Text color="gray.400">Loading courses...</Text>
+              ) : courses.length === 0 ? (
+                <Box textAlign="center" py={8}>
+                  <Text color="gray.400" mb={4}>No courses yet</Text>
+                  <Button colorScheme="blue" onClick={onOpen}>
+                    Create your first course
+                  </Button>
+                </Box>
+              ) : (
+                <Table variant="simple" colorScheme="gray">
+                  <Thead>
+                    <Tr>
+                      <Th color="gray.300">Course</Th>
+                      <Th color="gray.300">Price</Th>
+                      <Th color="gray.300">Status</Th>
+                      <Th color="gray.300">Students</Th>
+                      <Th color="gray.300">Videos</Th>
+                      <Th color="gray.300">Created</Th>
+                      <Th color="gray.300">Actions</Th>
                     </Tr>
-                  ))}
-                </Tbody>
-              </Table>
-            )}
-          </CardBody>
-        </Card>
+                  </Thead>
+                  <Tbody>
+                    {courses.map((course) => (
+                      <Tr key={course._id}>
+                        <Td>
+                          <VStack align="start" spacing={1}>
+                            <Text fontWeight="medium" color="white">{course.title}</Text>
+                            <Text fontSize="sm" color="gray.400" noOfLines={2}>
+                              {course.description}
+                            </Text>
+                          </VStack>
+                        </Td>
+                        <Td color="white">${course.price}</Td>
+                        <Td>
+                          <Badge
+                            colorScheme={course.published ? 'green' : 'gray'}
+                          >
+                            {course.published ? 'Published' : 'Draft'}
+                          </Badge>
+                        </Td>
+                        <Td color="white">{course.enrolledStudents?.length || 0}</Td>
+                        <Td color="white">{course.videos?.length || 0}</Td>
+                        <Td color="gray.400">
+                          {new Date(course.createdAt).toLocaleDateString()}
+                        </Td>
+                        <Td>
+                          <HStack spacing={2}>
+                            <Button
+                              size="sm"
+                              colorScheme="blue"
+                              leftIcon={<FiVideo />}
+                              onClick={() => openVideoModal(course)}
+                            >
+                              Videos
+                            </Button>
+                            <Menu>
+                              <MenuButton
+                                as={IconButton}
+                                icon={<FiMoreVertical />}
+                                variant="ghost"
+                                size="sm"
+                                color="gray.300"
+                                _hover={{ bg: 'gray.700' }}
+                              />
+                              <MenuList bg="gray.800" borderColor="gray.700">
+                                <MenuItem icon={<FiEye />} _hover={{ bg: 'gray.700' }} onClick={() => navigate(`/courses/${course._id}`)}>View</MenuItem>
+                                <MenuItem icon={<FiEdit />} _hover={{ bg: 'gray.700' }}>Edit</MenuItem>
+                                <MenuItem 
+                                  icon={<FiTrash2 />} 
+                                  color="red.400"
+                                  onClick={() => handleDeleteCourse(course._id)}
+                                  _hover={{ bg: 'gray.700' }}
+                                >
+                                  Delete
+                                </MenuItem>
+                              </MenuList>
+                            </Menu>
+                          </HStack>
+                        </Td>
+                      </Tr>
+                    ))}
+                  </Tbody>
+                </Table>
+              )}
+            </CardBody>
+          </Card>
+        </Box>
       </Container>
 
       {/* Create Course Modal */}
@@ -596,9 +627,11 @@ export default function AdminDashboard() {
                             <Text color="white" fontWeight="medium">
                               {index + 1}. {video.title}
                             </Text>
-                            <Text color="gray.400" fontSize="sm">
-                              {Math.floor(video.duration / 60)}m {video.duration % 60}s
-                            </Text>
+                            {typeof video.duration === 'number' && video.duration > 0 && (
+                              <Text color="gray.400" fontSize="sm">
+                                {Math.floor(video.duration / 60)}m {video.duration % 60}s
+                              </Text>
+                            )}
                           </VStack>
                           <IconButton
                             size="sm"
@@ -606,6 +639,7 @@ export default function AdminDashboard() {
                             colorScheme="red"
                             variant="ghost"
                             aria-label="Delete video"
+                            onClick={() => handleDeleteVideo(video._id)}
                           />
                         </HStack>
                       </ListItem>

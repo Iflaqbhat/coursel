@@ -17,7 +17,8 @@ import {
   Stat,
   StatLabel,
   StatNumber,
-  StatHelpText
+  StatHelpText,
+  Flex
 } from '@chakra-ui/react'
 import { Link as RouterLink } from 'react-router-dom'
 import { useContext } from 'react'
@@ -76,60 +77,17 @@ export default function Home() {
   ]
 
   return (
-    <Box bgGradient="linear(to-br, brand.50, brand.100, white)" minH="100vh">
-      {/* Hero Section */}
-      <Box bgGradient="linear(135deg, #4f46e5 0%, #7c3aed 100%)" color="white" py={20} position="relative" overflow="hidden">
-        <Box 
-          position="absolute"
-          top="-50px"
-          left="-50px"
-          w="200px"
-          h="200px"
-          bg="rgba(255, 255, 255, 0.05)"
-          borderRadius="full"
-          filter="blur(80px)"
-          zIndex={0}
-        />
-        <Box 
-          position="absolute"
-          bottom="-100px"
-          right="-100px"
-          w="300px"
-          h="300px"
-          bg="rgba(255, 255, 255, 0.08)"
-          borderRadius="full"
-          filter="blur(100px)"
-          zIndex={0}
-        />
-        <Container maxW="7xl" position="relative" zIndex={1}>
-          <Grid templateColumns={{ base: '1fr', lg: '1fr 1fr' }} gap={12} alignItems="center">
-            <VStack align="start" spacing={8}>
-              <Badge 
-                colorScheme="purple" 
-                variant="solid"
-                px={4} 
-                py={2} 
-                borderRadius="full"
-                fontSize="sm"
-                bg="purple.400"
-              >
-                🚀 Transform Your Career Today
-              </Badge>
-              <Heading
-                size="2xl"
-                fontWeight="bold"
-                lineHeight="1.2"
-                color="white"
-              >
-                Master New Skills with{' '}
-                <Text as="span" color="yellow.300">
-                  Expert-Led Courses
-                </Text>
+    <Box minH="100vh" bgGradient="linear(to-br, purple.50, white)" py={{ base: 8, md: 16 }}>
+      <Container maxW="7xl" px={{ base: 2, md: 8 }}>
+        <VStack spacing={12} align="stretch">
+          {/* Hero Section */}
+          <Flex direction={{ base: 'column', md: 'row' }} align="center" justify="space-between" gap={8}>
+            <VStack align="start" spacing={6} flex={1} textAlign={{ base: 'center', md: 'left' }}>
+              <Heading size={{ base: '2xl', md: '4xl' }} color="purple.700">
+                Unlock Your Learning Potential
               </Heading>
-              <Text fontSize="xl" opacity={0.9} maxW="md" color="purple.100">
-                Join thousands of learners worldwide. Access premium courses, 
-                learn from industry experts, and advance your career with our 
-                comprehensive learning platform.
+              <Text fontSize={{ base: 'md', md: 'xl' }} color="gray.600">
+                Discover top courses, learn from industry experts, and master new skills at your own pace.
               </Text>
               {isAdmin ? (
                 <Button
@@ -156,25 +114,29 @@ export default function Home() {
                     bgGradient="linear(to-r, purple.500, purple.700)"
                     color="white"
                     _hover={{ bgGradient: 'linear(to-r, purple.600, purple.800)', boxShadow: 'lg', transform: 'translateY(-2px)' }}
+                    _active={{ bgGradient: 'linear(to-r, #2d0260, #4b006e)', transform: 'scale(0.92)', boxShadow: '0 0 0 6px #a78bfa' }}
                     transition="all 0.2s"
                   >
                     Explore Courses
                   </Button>
-                  <Button
+                  <Button 
                     as={RouterLink}
                     to="/courses"
                     size="lg"
-                    variant="outline"
+                    variant="accent"
+                    leftIcon={<FiPlay />}
+                    bgGradient="linear(to-r, purple.500, purple.700)"
                     color="white"
-                    borderColor="purple.200"
-                    _hover={{ bg: 'purple.500', borderColor: 'purple.500' }}
+                    _hover={{ bgGradient: 'linear(to-r, purple.600, purple.800)', boxShadow: 'lg', transform: 'translateY(-2px)' }}
+                    _active={{ bgGradient: 'linear(to-r, #2d0260, #4b006e)', transform: 'scale(0.92)', boxShadow: '0 0 0 6px #a78bfa' }}
+                    transition="all 0.2s"
                   >
                     Get Started Free
                   </Button>
                 </HStack>
               )}
             </VStack>
-            <Box position="relative">
+            <Box flex={1} display={{ base: 'block', md: 'block' }}>
               <Image
                 src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80"
                 alt="Students learning"
@@ -182,142 +144,142 @@ export default function Home() {
                 shadow="2xl"
               />
             </Box>
-          </Grid>
-        </Container>
-      </Box>
+          </Flex>
 
-      {/* Stats Section */}
-      <Box py={16} bgGradient="linear(to-r, brand.50, brand.100)" shadow="md">
-        <Container maxW="7xl">
-          <SimpleGrid columns={{ base: 2, md: 4 }} spacing={8}>
-            {stats.map((stat, index) => (
-              <Stat key={index} textAlign="center" p={4} borderRadius="lg" bg="white" boxShadow="lg">
-                <StatLabel color="gray.600" fontSize="md" fontWeight="bold">
-                  {stat.label}
-                </StatLabel>
-                <StatNumber color="purple.600" fontSize="4xl" fontWeight="extrabold">
-                  {stat.value}
-                </StatNumber>
-                <StatHelpText>
-                  <Icon as={stat.icon} color="purple.400" w={6} h={6} />
-                </StatHelpText>
-              </Stat>
-            ))}
-          </SimpleGrid>
-        </Container>
-      </Box>
+          {/* Stats Section */}
+          <Box py={16} bgGradient="linear(to-r, brand.50, brand.100)" shadow="md">
+            <Container maxW="7xl">
+              <SimpleGrid columns={{ base: 2, md: 4 }} spacing={8}>
+                {stats.map((stat, index) => (
+                  <Stat key={index} textAlign="center" p={4} borderRadius="lg" bg="white" boxShadow="lg">
+                    <StatLabel color="gray.600" fontSize="md" fontWeight="bold">
+                      {stat.label}
+                    </StatLabel>
+                    <StatNumber color="purple.600" fontSize="4xl" fontWeight="extrabold">
+                      {stat.value}
+                    </StatNumber>
+                    <StatHelpText>
+                      <Icon as={stat.icon} color="purple.400" w={6} h={6} />
+                    </StatHelpText>
+                  </Stat>
+                ))}
+              </SimpleGrid>
+            </Container>
+          </Box>
 
-      {/* Features Section */}
-      <Box py={20} bgGradient="linear(to-br, brand.100, white)">
-        <Container maxW="7xl">
-          <VStack spacing={16}>
-            <VStack spacing={4} textAlign="center" maxW="2xl">
-              <Heading size="xl" color={headingColor}>
-                Why Choose Coursell?
-              </Heading>
-              <Text fontSize="lg" color={subTextColor}>
-                Our platform is designed to provide the best learning experience 
-                with cutting-edge features and expert content.
-              </Text>
-            </VStack>
-            <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={8}>
-              {features.map((feature, index) => (
-                <Card 
-                  key={index} 
-                  p={0}
-                  textAlign="center" 
-                  shadow="2xl" 
-                  borderRadius="2xl" 
-                  bg="rgba(255,255,255,0.85)"
-                  style={{ backdropFilter: 'blur(8px)' }}
-                  overflow="hidden"
-                  position="relative"
-                  _hover={{ shadow: '3xl', transform: 'translateY(-8px) scale(1.03)' }} 
-                  transition="all 0.3s"
-                >
-                  <Box
-                    position="absolute"
-                    top={0}
-                    left={0}
-                    w="100%"
-                    h="100%"
-                    zIndex={0}
-                  >
-                    <Image
-                      src={featureImages[index]}
-                      alt={feature.title}
-                      objectFit="cover"
-                      w="100%"
-                      h="100%"
-                      opacity={0.92}
-                    />
-                    <Box
-                      position="absolute"
-                      top={0}
-                      left={0}
-                      w="100%"
-                      h="100%"
-                      bg="rgba(0,0,0,0.45)"
-                      zIndex={1}
-                    />
-                  </Box>
-                  <CardBody position="relative" zIndex={2} p={8}>
-                    <VStack spacing={4}>
+          {/* Features Section */}
+          <Box py={20} bgGradient="linear(to-br, brand.100, white)">
+            <Container maxW="7xl">
+              <VStack spacing={16}>
+                <VStack spacing={4} textAlign="center" maxW="2xl">
+                  <Heading size="xl" color={headingColor}>
+                    Why Choose Coursell?
+                  </Heading>
+                  <Text fontSize="lg" color={subTextColor}>
+                    Our platform is designed to provide the best learning experience 
+                    with cutting-edge features and expert content.
+                  </Text>
+                </VStack>
+                <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={8}>
+                  {features.map((feature, index) => (
+                    <Card 
+                      key={index} 
+                      p={0}
+                      textAlign="center" 
+                      shadow="2xl" 
+                      borderRadius="2xl" 
+                      bg="rgba(255,255,255,0.85)"
+                      style={{ backdropFilter: 'blur(8px)' }}
+                      overflow="hidden"
+                      position="relative"
+                      _hover={{ shadow: '3xl', transform: 'translateY(-8px) scale(1.03)' }} 
+                      transition="all 0.3s"
+                    >
                       <Box
-                        p={3}
-                        bg="whiteAlpha.300"
-                        borderRadius="full"
-                        color="white"
-                        boxShadow="md"
-                        mb={2}
+                        position="absolute"
+                        top={0}
+                        left={0}
+                        w="100%"
+                        h="100%"
+                        zIndex={0}
                       >
-                        <Icon as={feature.icon} w={7} h={7} />
+                        <Image
+                          src={featureImages[index]}
+                          alt={feature.title}
+                          objectFit="cover"
+                          w="100%"
+                          h="100%"
+                          opacity={0.92}
+                        />
+                        <Box
+                          position="absolute"
+                          top={0}
+                          left={0}
+                          w="100%"
+                          h="100%"
+                          bg="rgba(0,0,0,0.45)"
+                          zIndex={1}
+                        />
                       </Box>
-                      <VStack spacing={2}>
-                        <Heading size="md" color="white" fontWeight="bold">
-                          {feature.title}
-                        </Heading>
-                        <Text color="white" fontWeight="semibold" fontSize="sm" textShadow="0 2px 8px rgba(0,0,0,0.25)">
-                          {feature.description}
-                        </Text>
-                      </VStack>
-                    </VStack>
-                  </CardBody>
-                </Card>
-              ))}
-            </SimpleGrid>
-          </VStack>
-        </Container>
-      </Box>
+                      <CardBody position="relative" zIndex={2} p={8}>
+                        <VStack spacing={4}>
+                          <Box
+                            p={3}
+                            bg="whiteAlpha.300"
+                            borderRadius="full"
+                            color="white"
+                            boxShadow="md"
+                            mb={2}
+                          >
+                            <Icon as={feature.icon} w={7} h={7} />
+                          </Box>
+                          <VStack spacing={2}>
+                            <Heading size="md" color="white" fontWeight="bold">
+                              {feature.title}
+                            </Heading>
+                            <Text color="white" fontWeight="semibold" fontSize="sm" textShadow="0 2px 8px rgba(0,0,0,0.25)">
+                              {feature.description}
+                            </Text>
+                          </VStack>
+                        </VStack>
+                      </CardBody>
+                    </Card>
+                  ))}
+                </SimpleGrid>
+              </VStack>
+            </Container>
+          </Box>
 
-      {/* Call to Action Section */}
-      {!isAdmin && (
-        <Box bgGradient="linear(135deg, #4f46e5 0%, #7c3aed 100%)" color="white" py={20} textAlign="center">
-          <Container maxW="4xl">
-            <VStack spacing={6}>
-              <Heading size="xl" fontWeight="bold">
-                Ready to Start Your Learning Journey?
-              </Heading>
-              <Text fontSize="lg" opacity={0.9}>
-                Join thousands of learners and unlock your full potential today.
-              </Text>
-              <Button
-                as={RouterLink}
-                to="/register"
-                size="lg"
-                variant="accent"
-                leftIcon={<FiZap />}
-                bgGradient="linear(to-r, purple.500, purple.700)"
-                color="white"
-                _hover={{ bgGradient: 'linear(to-r, purple.600, purple.800)', boxShadow: 'lg', transform: 'translateY(-2px)' }}
-                transition="all 0.2s"
-              >
-                Sign Up Now
-              </Button>
-            </VStack>
-          </Container>
-        </Box>
-      )}
+          {/* Call to Action Section */}
+          {!isAdmin && (
+            <Box bgGradient="linear(135deg, #4f46e5 0%, #7c3aed 100%)" color="white" py={20} textAlign="center">
+              <Container maxW="4xl">
+                <VStack spacing={6}>
+                  <Heading size="xl" fontWeight="bold">
+                    Ready to Start Your Learning Journey?
+                  </Heading>
+                  <Text fontSize="lg" opacity={0.9}>
+                    Join thousands of learners and unlock your full potential today.
+                  </Text>
+                  <Button
+                    as={RouterLink}
+                    to="/register"
+                    size="lg"
+                    variant="accent"
+                    leftIcon={<FiZap />}
+                    bgGradient="linear(to-r, purple.500, purple.700)"
+                    color="white"
+                    _hover={{ bgGradient: 'linear(to-r, purple.600, purple.800)', boxShadow: 'lg', transform: 'translateY(-2px)' }}
+                    transition="all 0.2s"
+                  >
+                    Sign Up Now
+                  </Button>
+                </VStack>
+              </Container>
+            </Box>
+          )}
+        </VStack>
+      </Container>
     </Box>
   )
 }

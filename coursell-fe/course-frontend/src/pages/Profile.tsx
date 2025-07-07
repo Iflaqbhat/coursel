@@ -160,19 +160,20 @@ export default function Profile() {
 
   return (
     <Box minH="100vh" bg="gray.50">
-      <Container maxW="4xl" py={8}>
+      <Container maxW="4xl" py={8} px={{ base: 2, md: 8 }}>
         <VStack spacing={8} align="stretch">
           {/* Header */}
           <Box>
             <Heading 
-              size="2xl" 
+              size={{ base: 'lg', md: '2xl' }}
               color="gray.800" 
               fontWeight="bold"
               mb={2}
+              textAlign={{ base: 'center', md: 'left' }}
             >
               Profile Settings
             </Heading>
-            <Text fontSize="lg" color="gray.600">
+            <Text fontSize={{ base: 'md', md: 'lg' }} color="gray.600" textAlign={{ base: 'center', md: 'left' }}>
               Manage your account information and preferences
             </Text>
           </Box>
@@ -180,7 +181,7 @@ export default function Profile() {
           {/* Profile Information */}
           <Card bg="white" boxShadow="lg" borderRadius="xl">
             <CardHeader>
-              <HStack spacing={4}>
+              <HStack spacing={4} flexDirection={{ base: 'column', sm: 'row' }} align={{ base: 'start', sm: 'center' }}>
                 <Box
                   p={3}
                   bg="linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)"
@@ -200,7 +201,7 @@ export default function Profile() {
             </CardHeader>
             <CardBody pt={0}>
               <VStack spacing={6}>
-                <HStack spacing={6} w="full">
+                <HStack spacing={6} w="full" flexDirection={{ base: 'column', md: 'row' }}>
                   <FormControl isRequired>
                     <FormLabel color="gray.700" fontWeight="medium">
                       First Name
@@ -293,7 +294,7 @@ export default function Profile() {
           {/* Change Password */}
           <Card bg="white" boxShadow="lg" borderRadius="xl">
             <CardHeader>
-              <HStack spacing={4}>
+              <HStack spacing={4} flexDirection={{ base: 'column', sm: 'row' }} align={{ base: 'start', sm: 'center' }}>
                 <Box
                   p={3}
                   bg="linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)"
@@ -351,7 +352,7 @@ export default function Profile() {
                   </InputGroup>
                 </FormControl>
 
-                <HStack spacing={6} w="full">
+                <HStack spacing={6} w="full" flexDirection={{ base: 'column', md: 'row' }}>
                   <FormControl>
                     <FormLabel color="gray.700" fontWeight="medium">
                       New Password
@@ -444,7 +445,7 @@ export default function Profile() {
           {/* Account Security */}
           <Card bg="white" boxShadow="lg" borderRadius="xl">
             <CardHeader>
-              <HStack spacing={4}>
+              <HStack spacing={4} flexDirection={{ base: 'column', sm: 'row' }} align={{ base: 'start', sm: 'center' }}>
                 <Box
                   p={3}
                   bg="linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)"
@@ -464,7 +465,7 @@ export default function Profile() {
             </CardHeader>
             <CardBody pt={0}>
               <VStack spacing={4} align="start">
-                <HStack spacing={4}>
+                <HStack spacing={4} flexDirection={{ base: 'column', sm: 'row' }} align={{ base: 'start', sm: 'center' }}>
                   <Avatar size="lg" name={user?.name} bg="purple.500" />
                   <VStack align="start" spacing={1}>
                     <Text fontWeight="medium" color="gray.800">

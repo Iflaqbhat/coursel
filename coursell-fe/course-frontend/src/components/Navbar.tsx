@@ -23,7 +23,9 @@ import {
   Badge,
   Container,
   VStack,
-  Tooltip
+  Tooltip,
+  Spinner,
+  Center
 } from '@chakra-ui/react'
 import { keyframes } from '@emotion/react'
 import {
@@ -41,6 +43,7 @@ import {
   FiShield,
 } from 'react-icons/fi'
 import { AuthContext } from '../context/AuthContext'
+import { useState } from 'react';
 
 // Animation keyframes
 const glowAnimation = keyframes`
@@ -55,8 +58,16 @@ const floatAnimation = keyframes`
 `;
 
 export default function Navbar() {
-  const { isOpen, onToggle } = useDisclosure()
+  const { isOpen, onToggle, onClose } = useDisclosure()
   const { user, isAdmin, logout } = useContext(AuthContext)
+  const [loadingLogout, setLoadingLogout] = useState(false);
+
+  const handleLogout = async () => {
+    setLoadingLogout(true);
+    await new Promise((resolve) => setTimeout(resolve, 800)); // Simulate async logout
+    logout();
+    setLoadingLogout(false);
+  };
 
   const navbarBg = useColorModeValue('rgba(255, 255, 255, 0.95)', 'rgba(26, 32, 44, 0.95)');
   const textColor = useColorModeValue('gray.700', 'gray.200');
@@ -76,16 +87,22 @@ export default function Navbar() {
       top={0}
       zIndex={1000}
     >
-      <Container maxW="7xl">
+      {loadingLogout && (
+        <Box position="fixed" top={0} left={0} w="100vw" h="100vh" bg="blackAlpha.400" zIndex={2000} display="flex" alignItems="center" justifyContent="center">
+          <Spinner size="xl" color="purple.500" thickness="4px" speed="0.7s" label="Logging out..." />
+        </Box>
+      )}
+      <Container maxW="7xl" px={{ base: 2, md: 4 }}>
         <Flex
-          minH={'80px'}
-          py={{ base: 3 }}
-          px={{ base: 4 }}
+          minH={{ base: '60px', md: '80px' }}
+          py={{ base: 2, md: 3 }}
+          px={{ base: 0, md: 4 }}
           align={'center'}
           justify={'space-between'}
+          direction={{ base: 'column', md: 'row' }}
         >
           {/* Enhanced Logo */}
-          <Flex align="center">
+          <Flex align="center" minW={0} flex={{ base: 1, md: 'none' }}>
             <Box
               as={RouterLink}
               to="/"
@@ -126,7 +143,7 @@ export default function Navbar() {
 
           {/* Enhanced Desktop Navigation */}
           <Flex display={{ base: 'none', md: 'flex' }} align="center">
-            <HStack spacing={8}>
+            <HStack spacing={{ base: 2, md: 8 }}>
               <Link
                 as={RouterLink}
                 to="/"
@@ -197,7 +214,7 @@ export default function Navbar() {
             flex={{ base: 1, md: 0 }}
             justify={'flex-end'}
             direction={'row'}
-            spacing={4}
+            spacing={{ base: 2, md: 4 }}
             align="center"
           >
             {!user ? (
@@ -350,7 +367,7 @@ export default function Navbar() {
                     <MenuDivider borderColor={borderColor} mx={2} />
                     <MenuItem
                       icon={<FiLogOut color={purple500} />}
-                      onClick={logout}
+                      onClick={handleLogout}
                       _hover={{ bg: hoverBg }}
                       color={textColor}
                       borderRadius="md"
@@ -367,10 +384,11 @@ export default function Navbar() {
                     icon={<FiLogOut />}
                     colorScheme="purple"
                     variant="ghost"
-                    onClick={logout}
+                    onClick={handleLogout}
                     ml={2}
                     _hover={{ bg: hoverBg, color: purple500 }}
                     title="Logout"
+                    isLoading={loadingLogout}
                   />
                 )}
               </HStack>
@@ -411,6 +429,7 @@ export default function Navbar() {
               <Link
                 as={RouterLink}
                 to="/"
+                onClick={onClose}
                 py={3}
                 px={4}
                 fontSize="md"
@@ -427,6 +446,7 @@ export default function Navbar() {
               <Link
                 as={RouterLink}
                 to="/courses"
+                onClick={onClose}
                 py={3}
                 px={4}
                 fontSize="md"
@@ -445,6 +465,7 @@ export default function Navbar() {
                   <Link
                     as={RouterLink}
                     to="/login"
+                    onClick={onClose}
                     py={3}
                     px={4}
                     fontSize="md"
@@ -458,6 +479,7 @@ export default function Navbar() {
                   <Link
                     as={RouterLink}
                     to="/register"
+                    onClick={onClose}
                     py={3}
                     px={4}
                     fontSize="md"
@@ -471,6 +493,7 @@ export default function Navbar() {
                   <Link
                     as={RouterLink}
                     to="/admin/login"
+                    onClick={onClose}
                     py={3}
                     px={4}
                     fontSize="md"
@@ -490,6 +513,7 @@ export default function Navbar() {
                   <Link
                     as={RouterLink}
                     to={'/profile'}
+                    onClick={onClose}
                     py={3}
                     px={4}
                     fontSize="md"
@@ -507,6 +531,7 @@ export default function Navbar() {
                     <Link
                       as={RouterLink}
                       to={'/dashboard'}
+                      onClick={onClose}
                       py={3}
                       px={4}
                       fontSize="md"
@@ -525,6 +550,7 @@ export default function Navbar() {
                     <Link
                       as={RouterLink}
                       to={'/admin/dashboard'}
+                      onClick={onClose}
                       py={3}
                       px={4}
                       fontSize="md"
@@ -540,7 +566,7 @@ export default function Navbar() {
                     </Link>
                   )}
                   <Link
-                    onClick={logout}
+                    onClick={() => { onClose(); handleLogout(); }}
                     py={3}
                     px={4}
                     fontSize="md"

@@ -99,19 +99,20 @@ export default function Dashboard() {
 
   return (
     <Box minH="100vh" bg="gray.50">
-      <Container maxW="7xl" py={8}>
+      <Container maxW="7xl" py={8} px={{ base: 2, md: 8 }}>
         {/* Header */}
         <VStack spacing={8} align="stretch">
           <Box>
             <Heading 
-              size="2xl" 
+              size={{ base: 'lg', md: '2xl' }}
               color="gray.800" 
               fontWeight="bold"
               mb={2}
+              textAlign={{ base: 'center', md: 'left' }}
             >
               Welcome back, {user?.name}! 👋
             </Heading>
-            <Text fontSize="lg" color="gray.600">
+            <Text fontSize={{ base: 'md', md: 'lg' }} color="gray.600" textAlign={{ base: 'center', md: 'left' }}>
               Continue your learning journey with your purchased courses
             </Text>
           </Box>
@@ -176,7 +177,7 @@ export default function Dashboard() {
           {/* User Info Card */}
           <Card bg="white" boxShadow="lg" borderRadius="xl">
             <CardHeader>
-              <HStack spacing={4}>
+              <HStack spacing={4} flexDirection={{ base: 'column', sm: 'row' }} align={{ base: 'start', sm: 'center' }}>
                 <Box
                   p={3}
                   bg="linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)"
@@ -235,7 +236,7 @@ export default function Dashboard() {
           {/* Purchased Courses */}
           <Card bg="white" boxShadow="lg" borderRadius="xl">
             <CardHeader>
-              <HStack spacing={4}>
+              <HStack spacing={4} flexDirection={{ base: 'column', sm: 'row' }} align={{ base: 'start', sm: 'center' }}>
                 <Box
                   p={3}
                   bg="linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)"
@@ -284,7 +285,7 @@ export default function Dashboard() {
                   </VStack>
                 </Center>
               ) : (
-                <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
+                <SimpleGrid columns={{ base: 1, sm: 2, md: 3 }} spacing={6}>
                   {purchasedCourses.map((course) => (
                     <Card 
                       key={course._id} 

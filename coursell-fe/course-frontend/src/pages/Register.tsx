@@ -88,216 +88,226 @@ export default function Register() {
   };
 
   return (
-    <Box 
-      minH="100vh" 
-      bg="linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
-      py={8}
-    >
-      <Container maxW="md">
-        <Card 
-          bg="white" 
-          boxShadow="2xl" 
-          borderRadius="2xl"
-          overflow="hidden"
-        >
-          {/* Header */}
-          <Box 
-            bg="linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)"
-            p={8}
-            textAlign="center"
-          >
-            <VStack spacing={4}>
-              <Box 
-                p={3} 
-                bg="white" 
-                borderRadius="full"
-                boxShadow="lg"
-              >
-                <Icon as={FiZap} w={8} h={8} color="purple.600" />
-              </Box>
-              <VStack spacing={2}>
-                <Heading size="lg" color="white" fontWeight="bold">
-                  Join Coursell
-                </Heading>
-                <Text color="purple.100" fontSize="sm">
-                  Start your learning journey today
-                </Text>
-              </VStack>
-            </VStack>
+    <Box minH="100vh" bg="gray.50" py={8}>
+      {loading && (
+        <Box position="fixed" top={0} left={0} w="100vw" h="100vh" bg="blackAlpha.400" zIndex={2000} display="flex" alignItems="center" justifyContent="center">
+          <Spinner size="xl" color="purple.500" thickness="4px" speed="0.7s" label="Signing up..." />
+        </Box>
+      )}
+      <Container maxW="md" px={{ base: 2, md: 8 }}>
+        <VStack spacing={8} align="stretch">
+          <Box textAlign={{ base: 'center', md: 'left' }}>
+            <Heading size={{ base: 'lg', md: 'xl' }} color="purple.600" mb={2}>
+              Register
+            </Heading>
+            <Text color="gray.600" fontSize={{ base: 'md', md: 'lg' }}>
+              Create your account to get started
+            </Text>
           </Box>
-
-          <CardBody p={8}>
-            <form onSubmit={handleSubmit}>
-              <VStack spacing={6}>
-                {error && (
-                  <Alert status="error" borderRadius="md">
-                    <AlertIcon />
-                    {error}
-                  </Alert>
-                )}
-
-                <HStack spacing={4} w="full">
-                  <FormControl isRequired>
-                    <FormLabel color="gray.700" fontWeight="medium">
-                      First Name
-                    </FormLabel>
-                    <InputGroup>
-                      <Input
-                        value={firstName}
-                        onChange={e => setFirstName(e.target.value)}
-                        placeholder="Enter your first name"
-                        size="lg"
-                        bg="gray.50"
-                        border="2px"
-                        borderColor="gray.200"
-                        _focus={{
-                          borderColor: 'purple.500',
-                          boxShadow: '0 0 0 1px var(--chakra-colors-purple-500)',
-                          bg: 'white'
-                        }}
-                        _hover={{
-                          borderColor: 'gray.300'
-                        }}
-                      />
-                      <InputRightElement>
-                        <Icon as={FiUser} color="gray.400" />
-                      </InputRightElement>
-                    </InputGroup>
-                  </FormControl>
-
-                  <FormControl isRequired>
-                    <FormLabel color="gray.700" fontWeight="medium">
-                      Last Name
-                    </FormLabel>
-                    <InputGroup>
-                      <Input
-                        value={lastName}
-                        onChange={e => setLastName(e.target.value)}
-                        placeholder="Enter your last name"
-                        size="lg"
-                        bg="gray.50"
-                        border="2px"
-                        borderColor="gray.200"
-                        _focus={{
-                          borderColor: 'purple.500',
-                          boxShadow: '0 0 0 1px var(--chakra-colors-purple-500)',
-                          bg: 'white'
-                        }}
-                        _hover={{
-                          borderColor: 'gray.300'
-                        }}
-                      />
-                      <InputRightElement>
-                        <Icon as={FiUser} color="gray.400" />
-                      </InputRightElement>
-                    </InputGroup>
-                  </FormControl>
-                </HStack>
-
-                <FormControl isRequired>
-                  <FormLabel color="gray.700" fontWeight="medium">
-                    Email Address
-                  </FormLabel>
-                  <InputGroup>
-                    <Input
-                      type="email"
-                      value={email}
-                      onChange={e => setEmail(e.target.value)}
-                      placeholder="Enter your email"
-                      size="lg"
-                      bg="gray.50"
-                      border="2px"
-                      borderColor="gray.200"
-                      _focus={{
-                        borderColor: 'purple.500',
-                        boxShadow: '0 0 0 1px var(--chakra-colors-purple-500)',
-                        bg: 'white'
-                      }}
-                      _hover={{
-                        borderColor: 'gray.300'
-                      }}
-                    />
-                    <InputRightElement>
-                      <Icon as={FiMail} color="gray.400" />
-                    </InputRightElement>
-                  </InputGroup>
-                </FormControl>
-
-                <FormControl isRequired>
-                  <FormLabel color="gray.700" fontWeight="medium">
-                    Password
-                  </FormLabel>
-                  <InputGroup>
-                    <Input
-                      type={showPassword ? 'text' : 'password'}
-                      value={password}
-                      onChange={e => setPassword(e.target.value)}
-                      placeholder="Create a strong password"
-                      size="lg"
-                      bg="gray.50"
-                      border="2px"
-                      borderColor="gray.200"
-                      _focus={{
-                        borderColor: 'purple.500',
-                        boxShadow: '0 0 0 1px var(--chakra-colors-purple-500)',
-                        bg: 'white'
-                      }}
-                      _hover={{
-                        borderColor: 'gray.300'
-                      }}
-                    />
-                    <InputRightElement>
-                      <HStack spacing={2}>
-                        <Icon as={FiLock} color="gray.400" />
-                        <IconButton
-                          aria-label={showPassword ? 'Hide password' : 'Show password'}
-                          icon={showPassword ? <ViewOffIcon /> : <ViewIcon />}
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setShowPassword(!showPassword)}
-                        />
-                      </HStack>
-                    </InputRightElement>
-                  </InputGroup>
-                </FormControl>
-
-                <Button
-                  type="submit"
-                  colorScheme="purple"
-                  size="lg"
-                  w="full"
-                  isLoading={loading}
-                  loadingText="Signing up..."
-                  spinner={<Spinner size="sm" />}
-                  _hover={{
-                    transform: 'translateY(-2px)',
-                    boxShadow: 'lg'
-                  }}
-                  _active={{
-                    transform: 'translateY(0)'
-                  }}
-                  transition="all 0.2s"
-                >
-                  Sign Up
-                </Button>
-
-                <Divider />
-
-                <Text fontSize="sm" color="gray.500" textAlign="center">
-                  Already have an account?{' '}
-                  <RouterLink to="/login">
-                    <Text as="span" color="purple.500" fontWeight="bold" _hover={{ textDecoration: 'underline' }}>
-                      Sign In Here
+          <Box w="full">
+            <Card 
+              bg="white" 
+              boxShadow="2xl" 
+              borderRadius="2xl"
+              overflow="hidden"
+            >
+              {/* Header */}
+              <Box 
+                bg="linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)"
+                p={8}
+                textAlign="center"
+              >
+                <VStack spacing={4}>
+                  <Box 
+                    p={3} 
+                    bg="white" 
+                    borderRadius="full"
+                    boxShadow="lg"
+                  >
+                    <Icon as={FiZap} w={8} h={8} color="purple.600" />
+                  </Box>
+                  <VStack spacing={2}>
+                    <Heading size="lg" color="white" fontWeight="bold">
+                      Join Coursell
+                    </Heading>
+                    <Text color="purple.100" fontSize="sm">
+                      Start your learning journey today
                     </Text>
-                  </RouterLink>
-                </Text>
-              </VStack>
-            </form>
-          </CardBody>
-        </Card>
+                  </VStack>
+                </VStack>
+              </Box>
+
+              <CardBody p={8}>
+                <form onSubmit={handleSubmit}>
+                  <VStack spacing={6}>
+                    {error && (
+                      <Alert status="error" borderRadius="md">
+                        <AlertIcon />
+                        {error}
+                      </Alert>
+                    )}
+
+                    <HStack spacing={4} w="full">
+                      <FormControl isRequired>
+                        <FormLabel color="gray.700" fontWeight="medium">
+                          First Name
+                        </FormLabel>
+                        <InputGroup>
+                          <Input
+                            value={firstName}
+                            onChange={e => setFirstName(e.target.value)}
+                            placeholder="Enter your first name"
+                            size="lg"
+                            bg="gray.50"
+                            border="2px"
+                            borderColor="gray.200"
+                            _focus={{
+                              borderColor: 'purple.500',
+                              boxShadow: '0 0 0 1px var(--chakra-colors-purple-500)',
+                              bg: 'white'
+                            }}
+                            _hover={{
+                              borderColor: 'gray.300'
+                            }}
+                          />
+                          <InputRightElement>
+                            <Icon as={FiUser} color="gray.400" />
+                          </InputRightElement>
+                        </InputGroup>
+                      </FormControl>
+
+                      <FormControl isRequired>
+                        <FormLabel color="gray.700" fontWeight="medium">
+                          Last Name
+                        </FormLabel>
+                        <InputGroup>
+                          <Input
+                            value={lastName}
+                            onChange={e => setLastName(e.target.value)}
+                            placeholder="Enter your last name"
+                            size="lg"
+                            bg="gray.50"
+                            border="2px"
+                            borderColor="gray.200"
+                            _focus={{
+                              borderColor: 'purple.500',
+                              boxShadow: '0 0 0 1px var(--chakra-colors-purple-500)',
+                              bg: 'white'
+                            }}
+                            _hover={{
+                              borderColor: 'gray.300'
+                            }}
+                          />
+                          <InputRightElement>
+                            <Icon as={FiUser} color="gray.400" />
+                          </InputRightElement>
+                        </InputGroup>
+                      </FormControl>
+                    </HStack>
+
+                    <FormControl isRequired>
+                      <FormLabel color="gray.700" fontWeight="medium">
+                        Email Address
+                      </FormLabel>
+                      <InputGroup>
+                        <Input
+                          type="email"
+                          value={email}
+                          onChange={e => setEmail(e.target.value)}
+                          placeholder="Enter your email"
+                          size="lg"
+                          bg="gray.50"
+                          border="2px"
+                          borderColor="gray.200"
+                          _focus={{
+                            borderColor: 'purple.500',
+                            boxShadow: '0 0 0 1px var(--chakra-colors-purple-500)',
+                            bg: 'white'
+                          }}
+                          _hover={{
+                            borderColor: 'gray.300'
+                          }}
+                        />
+                        <InputRightElement>
+                          <Icon as={FiMail} color="gray.400" />
+                        </InputRightElement>
+                      </InputGroup>
+                    </FormControl>
+
+                    <FormControl isRequired>
+                      <FormLabel color="gray.700" fontWeight="medium">
+                        Password
+                      </FormLabel>
+                      <InputGroup>
+                        <Input
+                          type={showPassword ? 'text' : 'password'}
+                          value={password}
+                          onChange={e => setPassword(e.target.value)}
+                          placeholder="Create a strong password"
+                          size="lg"
+                          bg="gray.50"
+                          border="2px"
+                          borderColor="gray.200"
+                          _focus={{
+                            borderColor: 'purple.500',
+                            boxShadow: '0 0 0 1px var(--chakra-colors-purple-500)',
+                            bg: 'white'
+                          }}
+                          _hover={{
+                            borderColor: 'gray.300'
+                          }}
+                        />
+                        <InputRightElement>
+                          <HStack spacing={2}>
+                            <Icon as={FiLock} color="gray.400" />
+                            <IconButton
+                              aria-label={showPassword ? 'Hide password' : 'Show password'}
+                              icon={showPassword ? <ViewOffIcon /> : <ViewIcon />}
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setShowPassword(!showPassword)}
+                            />
+                          </HStack>
+                        </InputRightElement>
+                      </InputGroup>
+                    </FormControl>
+
+                    <Button
+                      type="submit"
+                      colorScheme="purple"
+                      size="lg"
+                      w="full"
+                      isLoading={loading}
+                      loadingText="Signing up..."
+                      spinner={<Spinner size="sm" />}
+                      _hover={{
+                        transform: 'translateY(-2px)',
+                        boxShadow: 'lg'
+                      }}
+                      _active={{
+                        transform: 'translateY(0)'
+                      }}
+                      transition="all 0.2s"
+                    >
+                      Sign Up
+                    </Button>
+
+                    <Divider />
+
+                    <Text fontSize="sm" color="gray.500" textAlign="center">
+                      Already have an account?{' '}
+                      <RouterLink to="/login">
+                        <Text as="span" color="purple.500" fontWeight="bold" _hover={{ textDecoration: 'underline' }}>
+                          Sign In Here
+                        </Text>
+                      </RouterLink>
+                    </Text>
+                  </VStack>
+                </form>
+              </CardBody>
+            </Card>
+          </Box>
+        </VStack>
       </Container>
     </Box>
   );
