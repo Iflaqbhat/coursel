@@ -41,7 +41,7 @@ app.use(cors({
       return callback(null, true);
     }
     // Allow only your production frontend in production
-    if (isProduction && origin === process.env.FRONTEND_URL) {
+    if (isProduction && (origin === process.env.FRONTEND_URL || origin === 'https://coursell.netlify.app')) {
       return callback(null, true);
     }
     return callback(new Error('Not allowed by CORS'));
