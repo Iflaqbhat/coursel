@@ -206,7 +206,7 @@ const EditCourse = () => {
 
           {/* Form */}
           <Box w="full">
-            <CourseForm onSubmit={handleSubmit} initialValues={course} />
+            <CourseForm onSubmit={handleSubmit} course={course} />
           </Box>
         </VStack>
       </Container>
