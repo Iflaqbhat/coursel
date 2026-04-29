@@ -90,6 +90,10 @@ dist
 .cache/
 public
 
+# But track the Vite frontend public assets (favicon, og images, etc.)
+!coursell-fe/course-frontend/public
+!coursell-fe/course-frontend/public/**
+
 # Storybook build outputs
 .out
 .storybook-out

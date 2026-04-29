@@ -105,6 +105,23 @@ export default function Home() {
                 Available · Live · Building
               </HStack>
 
+              <HStack
+                spacing={2}
+                px={4}
+                py={2}
+                border="1px solid"
+                borderColor="rgba(0,229,255,0.2)"
+                bg="rgba(0,229,255,0.04)"
+                fontFamily="mono"
+                fontSize="11px"
+                color="brand.400"
+                letterSpacing="2px"
+                textTransform="uppercase"
+              >
+                <Box as="span">🇮🇳</Box>
+                <Text>India's #1 Learning Platform</Text>
+              </HStack>
+
               <Text
                 fontFamily="mono"
                 fontSize="14px"
@@ -118,12 +135,14 @@ export default function Home() {
               <Heading
                 fontFamily="display"
                 fontWeight={400}
-                fontSize={{ base: '64px', sm: '80px', md: '110px' }}
+                fontSize={{ base: '60px', sm: '76px', md: '104px' }}
                 lineHeight="0.95"
                 letterSpacing="-1px"
                 color="white"
               >
-                LEARN. <br />
+                INDIA'S TOP <br />
+                <Box as="span" color="brand.400">LEARNING</Box>
+                <br />
                 <Box
                   as="span"
                   color="transparent"
@@ -131,28 +150,28 @@ export default function Home() {
                     WebkitTextStroke: '1.5px rgba(255,255,255,0.25)',
                     transition: 'all .4s',
                     _hover: {
-                      color: '#00e5ff',
-                      WebkitTextStroke: '1.5px #00e5ff',
+                      color: '#7b61ff',
+                      WebkitTextStroke: '1.5px #7b61ff',
                     },
                   }}
                 >
-                  BUILD. SHIP.
+                  PLATFORM.
                 </Box>
               </Heading>
 
               <Text
                 fontFamily="mono"
-                fontSize={{ base: '14px', md: '17px' }}
+                fontSize={{ base: '14px', md: '16px' }}
                 color="#7d8fa3"
-                maxW="540px"
+                maxW="520px"
                 lineHeight="1.8"
               >
-                Coursell is a focused learning platform for developers. Master
-                modern stacks through{' '}
+                Coursell is built for Indian developers who want to go from
+                zero to shipping real apps.{' '}
                 <Box as="span" color="brand.400" fontStyle="italic">
-                  project-first courses
+                  Project-first courses
                 </Box>{' '}
-                — not endless theory.
+                — taught in the language of real engineers.
               </Text>
 
               <HStack spacing={4} flexWrap="wrap" pt={2}>
@@ -268,7 +287,7 @@ export default function Home() {
                 <Text color="#7d8fa3">{'}'}</Text>
                 <Box h="12px" />
                 <Text color="#3d4f63" fontStyle="italic">
-                  // Welcome aboard. Let's build.
+                  // Welcome to Coursell — India's top learning app.{' '}
                   <Box as="span" color="brand.400" sx={{ animation: 'blink 1s step-end infinite' }}>
                     _
                   </Box>
