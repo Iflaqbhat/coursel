@@ -1,80 +1,137 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { getCourse, purchaseCourse, checkPurchase } from "../services/api";
+import { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
+import {
+  Box,
+  Button,
+  Container,
+  HStack,
+  Heading,
+  Image,
+  Text,
+  useToast,
+} from '@chakra-ui/react'
+import { FiCheck, FiDollarSign } from 'react-icons/fi'
+import { checkPurchase, getCourse, purchaseCourse } from '../services/api'
 
 interface Course {
-  id: string;
-  title: string;
-  description: string;
-  price: number;
-  imageLink: string;
-  creator: string;
+  id: string
+  title: string
+  description: string
+  price: number
+  imageLink: string
+  creator: string
 }
 
 const CourseDetail = () => {
-  const { id } = useParams();
-  const [course, setCourse] = useState<Course | null>(null);
-  const [isPurchased, setIsPurchased] = useState(false);
-  const token = localStorage.getItem("token");
+  const { id } = useParams()
+  const [course, setCourse] = useState<Course | null>(null)
+  const [isPurchased, setIsPurchased] = useState(false)
+  const token = localStorage.getItem('token')
+  const toast = useToast()
 
   useEffect(() => {
     const fetchCourse = async () => {
       try {
-        const response = await getCourse(id!);
-        setCourse(response.data.course);
+        const response = await getCourse(id!)
+        setCourse(response.data.course)
         if (token) {
-          const purchaseResponse = await checkPurchase(id!);
-          setIsPurchased(purchaseResponse.data.purchased);
+          const purchaseResponse = await checkPurchase(id!)
+          setIsPurchased(purchaseResponse.data.purchased)
         }
       } catch (err) {
-        console.error("Fetch course error:", err);
+        // ignore
       }
-    };
-    fetchCourse();
-  }, [id, token]);
+    }
+    fetchCourse()
+  }, [id, token])
 
   const handlePurchase = async () => {
     if (!token) {
-      alert("Please sign in to purchase");
-      return;
+      toast({ title: 'Please sign in to purchase', status: 'warning', duration: 3000 })
+      return
     }
     try {
-      await purchaseCourse(id!);
-      setIsPurchased(true);
-      alert("Course purchased successfully!");
+      await purchaseCourse(id!)
+      setIsPurchased(true)
+      toast({ title: 'Course purchased', status: 'success', duration: 3000 })
     } catch (err) {
-      console.error("Purchase error:", err);
-      alert("Purchase failed");
+      toast({ title: 'Purchase failed', status: 'error', duration: 3000 })
     }
-  };
+  }
 
-  if (!course) return <div className="text-center py-8">Loading...</div>;
+  if (!course) {
+    return (
+      <Box minH="60vh" display="flex" alignItems="center" justifyContent="center">
+        <Text color="#7d8fa3" fontFamily="mono" letterSpacing="2px" textTransform="uppercase" fontSize="12px">
+          Loading...
+        </Text>
+      </Box>
+    )
+  }
 
   return (
-    <div className="container mx-auto py-8">
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <img
-          src={course.imageLink}
-          alt={course.title}
-          className="w-full h-64 object-cover rounded-md"
-        />
-        <h1 className="text-3xl font-bold mt-4">{course.title}</h1>
-        <p className="text-gray-600 mt-2">{course.description}</p>
-        <p className="text-gray-500 mt-2">By: {course.creator}</p>
-        <p className="text-blue-600 font-bold mt-2">${course.price}</p>
-        {isPurchased ? (
-          <p className="text-green-600 mt-4">You own this course!</p>
-        ) : (
-          <button
-            onClick={handlePurchase}
-            className="mt-4 bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
-          >
-            Purchase Course
-          </button>
-        )}
-      </div>
-    </div>
-  );
-};
+    <Box minH="100vh" py={{ base: 8, md: 16 }}>
+      <Container maxW="4xl" px={{ base: 4, md: 8 }}>
+        <Box
+          bg="#0d1117"
+          border="1px solid"
+          borderColor="rgba(255,255,255,0.07)"
+          overflow="hidden"
+        >
+          <Image src={course.imageLink} alt={course.title} w="100%" h="320px" objectFit="cover" />
+          <Box p={{ base: 6, md: 10 }}>
+            <Heading
+              fontFamily="display"
+              fontWeight={400}
+              fontSize={{ base: '36px', md: '52px' }}
+              color="white"
+              letterSpacing="0.5px"
+              mb={4}
+            >
+              {course.title.toUpperCase()}
+            </Heading>
+            <Text color="#7d8fa3" fontSize="md" mb={4} lineHeight="1.7">
+              {course.description}
+            </Text>
+            <Text color="#7d8fa3" fontFamily="mono" fontSize="sm" letterSpacing="1px" mb={6}>
+              By {course.creator}
+            </Text>
+            <HStack justify="space-between" align="center" flexWrap="wrap" gap={4}>
+              <Heading fontFamily="display" fontWeight={400} color="brand.400" fontSize="42px">
+                ${course.price}
+              </Heading>
+              {isPurchased ? (
+                <Button
+                  leftIcon={<FiCheck />}
+                  bg="rgba(57,211,83,0.12)"
+                  color="green.400"
+                  border="1px solid"
+                  borderColor="rgba(57,211,83,0.35)"
+                  isDisabled
+                  fontFamily="mono"
+                  letterSpacing="2px"
+                  textTransform="uppercase"
+                  fontSize="12px"
+                  _disabled={{ opacity: 1 }}
+                >
+                  Owned
+                </Button>
+              ) : (
+                <Button
+                  variant="cyan"
+                  leftIcon={<FiDollarSign />}
+                  onClick={handlePurchase}
+                  sx={{ clipPath: 'polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%)' }}
+                >
+                  Purchase Course
+                </Button>
+              )}
+            </HStack>
+          </Box>
+        </Box>
+      </Container>
+    </Box>
+  )
+}
 
-export default CourseDetail;
+export default CourseDetail

@@ -1,125 +1,115 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom'
 import {
   Box,
-  Container,
-  Heading,
-  Text,
-  useToast,
-  VStack,
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
-} from '@chakra-ui/react';
-import { ChevronRightIcon } from '@chakra-ui/icons';
-import CourseForm from "../components/CourseForm";
-import { createCourse } from "../services/api";
-import { useContext, useEffect } from 'react';
-import { AuthContext } from '../context/AuthContext';
+  Container,
+  Heading,
+  Text,
+  VStack,
+  useToast,
+} from '@chakra-ui/react'
+import { ChevronRightIcon } from '@chakra-ui/icons'
+import { useContext, useEffect } from 'react'
+import CourseForm from '../components/CourseForm'
+import { createCourse } from '../services/api'
+import { AuthContext } from '../context/AuthContext'
 
 const CreateCourse = () => {
-  const navigate = useNavigate();
-  const toast = useToast();
-  const { user, isAdmin } = useContext(AuthContext);
+  const navigate = useNavigate()
+  const toast = useToast()
+  const { user, isAdmin } = useContext(AuthContext)
 
   useEffect(() => {
     if (!user || !isAdmin) {
       toast({
         title: 'Authentication Required',
-        description: 'Please log in as admin to create courses',
+        description: 'Please log in as admin',
         status: 'error',
         duration: 3000,
-        isClosable: true,
-      });
-      navigate("/admin/login");
+      })
+      navigate('/admin/login')
     }
-  }, [user, isAdmin, navigate, toast]);
+  }, [user, isAdmin, navigate, toast])
 
   const handleSubmit = async (data: {
-    title: string;
-    description: string;
-    price: number;
-    imageLink: string;
-    published: boolean;
-    category: string;
-    level: string;
+    title: string
+    description: string
+    price: number
+    imageLink: string
+    published: boolean
+    category: string
+    level: string
     videos: Array<{
-      title: string;
-      description: string;
-      videoUrl: string;
-      duration: number;
-      order: number;
-    }>;
+      title: string
+      description: string
+      videoUrl: string
+      duration: number
+      order: number
+    }>
   }) => {
     if (!user || !isAdmin) {
       toast({
         title: 'Authentication Required',
-        description: 'Please log in as admin to create courses',
+        description: 'Please log in as admin',
         status: 'error',
         duration: 3000,
-        isClosable: true,
-      });
-      navigate("/admin/login");
-      return;
+      })
+      navigate('/admin/login')
+      return
     }
-
     try {
-      await createCourse(data);
-      toast({
-        title: 'Success!',
-        description: 'Course created successfully',
-        status: 'success',
-        duration: 3000,
-        isClosable: true,
-      });
-      navigate("/admin/dashboard");
+      await createCourse(data)
+      toast({ title: 'Success', description: 'Course created', status: 'success', duration: 3000 })
+      navigate('/admin/dashboard')
     } catch (err: any) {
-      console.error("Create course error:", err);
       toast({
         title: 'Error',
         description: err.response?.data?.message || 'Failed to create course',
         status: 'error',
         duration: 5000,
-        isClosable: true,
-      });
+      })
     }
-  };
+  }
 
   return (
-    <Box minH="100vh" bg="gray.50" py={8}>
-      <Container maxW="4xl" px={{ base: 2, md: 8 }}>
+    <Box minH="100vh" py={{ base: 12, md: 18 }}>
+      <Container maxW="5xl" px={{ base: 4, md: 8 }}>
         <VStack spacing={8} align="stretch">
-          {/* Breadcrumb */}
           <Breadcrumb
             spacing="8px"
-            separator={<ChevronRightIcon color="gray.500" />}
-            fontSize={{ base: 'sm', md: 'md' }}
+            separator={<ChevronRightIcon color="#7d8fa3" />}
+            fontFamily="mono"
+            fontSize="11px"
+            letterSpacing="2px"
+            textTransform="uppercase"
           >
             <BreadcrumbItem>
-              <BreadcrumbLink href="/admin/dashboard">Dashboard</BreadcrumbLink>
+              <BreadcrumbLink href="/admin/dashboard" color="#7d8fa3">
+                Dashboard
+              </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbItem isCurrentPage>
-              <BreadcrumbLink>Create Course</BreadcrumbLink>
+              <BreadcrumbLink color="brand.400">Create</BreadcrumbLink>
             </BreadcrumbItem>
           </Breadcrumb>
 
-          {/* Header */}
-          <Box textAlign={{ base: 'center', md: 'left' }}>
-            <Heading size={{ base: 'lg', md: 'xl' }} color="purple.600" mb={2}>
-              Create New Course
+          <VStack align="start" spacing={3}>
+            <Box className="section-label">Admin Action</Box>
+            <Heading className="section-title">
+              NEW <Box as="span" color="brand.400">COURSE</Box>
             </Heading>
-            <Text color="gray.600" fontSize={{ base: 'md', md: 'lg' }}>
-              Add a new course to your platform and start teaching students
+            <Text color="#7d8fa3" fontFamily="mono" fontSize="sm">
+              Add a new course to your platform.
             </Text>
-          </Box>
+          </VStack>
 
-          {/* Form */}
-          <Box w="full">
-            <CourseForm onSubmit={handleSubmit} />
-          </Box>
+          <CourseForm onSubmit={handleSubmit} />
         </VStack>
       </Container>
     </Box>
-  );
-};
+  )
+}
 
-export default CreateCourse;
+export default CreateCourse

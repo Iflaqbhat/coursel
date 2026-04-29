@@ -1,282 +1,321 @@
-import { useState, useEffect } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { useState, useEffect, useContext } from 'react'
+import { Link as RouterLink } from 'react-router-dom'
 import {
-  Box,
-  Container,
-  Heading,
-  Text,
-  Grid,
-  Card,
-  CardBody,
-  Image,
   Badge,
+  Box,
   Button,
-  VStack,
-  HStack,
+  Container,
   Flex,
-  useToast,
-  Skeleton,
-  SkeletonText,
+  Grid,
+  HStack,
+  Heading,
+  Icon,
+  Image,
   Input,
   InputGroup,
   InputLeftElement,
   Select,
-  Icon,
-  SimpleGrid
-} from '@chakra-ui/react';
-import { FiSearch, FiStar, FiUsers, FiClock, FiPlay } from 'react-icons/fi';
-// import axios from 'axios';
-import { getAdminCoursesBulk } from '../services/api';
-import { AuthContext } from '../context/AuthContext';
-import { useContext } from 'react';
+  SimpleGrid,
+  Skeleton,
+  SkeletonText,
+  Text,
+  VStack,
+  useToast,
+} from '@chakra-ui/react'
+import { FiClock, FiPlay, FiSearch, FiStar, FiUsers } from 'react-icons/fi'
+import { getAdminCoursesBulk } from '../services/api'
+import { AuthContext } from '../context/AuthContext'
 
 interface Course {
-  id: string;
-  _id: string;
-  title: string;
-  description: string;
-  price: number;
-  imageLink: string;
-  published: boolean;
-  creator: string;
-  category?: string;
-  level?: string;
+  id: string
+  _id: string
+  title: string
+  description: string
+  price: number
+  imageLink: string
+  published: boolean
+  creator: string
+  category?: string
+  level?: string
 }
 
+const categories = [
+  { value: '', label: 'All Categories' },
+  { value: 'programming', label: 'Programming' },
+  { value: 'design', label: 'Design' },
+  { value: 'business', label: 'Business' },
+  { value: 'marketing', label: 'Marketing' },
+  { value: 'music', label: 'Music' },
+  { value: 'other', label: 'Other' },
+]
+
 export default function Courses() {
-  const { isAdmin } = useContext(AuthContext);
-  const [courses, setCourses] = useState<Course[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const toast = useToast();
+  const { isAdmin } = useContext(AuthContext)
+  const [courses, setCourses] = useState<Course[]>([])
+  const [loading, setLoading] = useState(true)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [selectedCategory, setSelectedCategory] = useState('')
+  const toast = useToast()
 
   useEffect(() => {
-    fetchCourses();
-  }, []);
+    fetchCourses()
+  }, [])
 
   const fetchCourses = async () => {
     try {
-      const response = await getAdminCoursesBulk();
-      setCourses(response.data.courses);
+      const response = await getAdminCoursesBulk()
+      setCourses(response.data.courses)
     } catch (error) {
-      toast({
-        title: 'Error fetching courses',
-        status: 'error',
-        duration: 3000
-      });
+      toast({ title: 'Error fetching courses', status: 'error', duration: 3000 })
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
-  const filteredCourses = courses.filter(course => {
-    const matchesSearch = course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         course.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = !selectedCategory || course.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
-
-  const categories = [
-    { value: '', label: 'All Categories' },
-    { value: 'programming', label: 'Programming' },
-    { value: 'design', label: 'Design' },
-    { value: 'business', label: 'Business' },
-    { value: 'marketing', label: 'Marketing' },
-    { value: 'music', label: 'Music' },
-    { value: 'other', label: 'Other' }
-  ];
+  const filteredCourses = courses.filter((c) => {
+    const matchesSearch =
+      c.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      c.description.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesCategory = !selectedCategory || c.category === selectedCategory
+    return matchesSearch && matchesCategory
+  })
 
   if (loading) {
     return (
-      <Box bg="gray.50" minH="100vh" py={12}>
-        <Container maxW="7xl">
-          <Grid templateColumns="repeat(auto-fill, minmax(300px, 1fr))" gap={8}>
+      <Box minH="100vh" py={20}>
+        <Container maxW="7xl" px={{ base: 4, md: 8 }}>
+          <Grid templateColumns="repeat(auto-fill, minmax(300px, 1fr))" gap={6}>
             {[1, 2, 3, 4, 5, 6].map((i) => (
-              <Card key={i} shadow="lg" borderRadius="xl" overflow="hidden">
-                <Skeleton height="200px" />
-                <CardBody p={6}>
-                  <Skeleton height="24px" mb={2} />
-                  <SkeletonText noOfLines={3} mb={4} />
-                  <Skeleton height="32px" />
-                </CardBody>
-              </Card>
+              <Box
+                key={i}
+                bg="#0d1117"
+                border="1px solid"
+                borderColor="rgba(255,255,255,0.07)"
+                overflow="hidden"
+              >
+                <Skeleton height="200px" startColor="#111820" endColor="#1a2330" />
+                <Box p={6}>
+                  <Skeleton height="22px" mb={3} startColor="#111820" endColor="#1a2330" />
+                  <SkeletonText noOfLines={3} startColor="#111820" endColor="#1a2330" />
+                </Box>
+              </Box>
             ))}
           </Grid>
         </Container>
       </Box>
-    );
+    )
   }
 
   return (
-    <Box bg="gray.50" minH="100vh" py={12}>
-      <Container maxW="7xl" py={8} px={{ base: 2, md: 8 }}>
-        {/* Admin Add Course Button */}
-        {isAdmin && (
-          <Flex justify="flex-end" mb={4}>
-            <Button as={RouterLink} to="/admin/create-course" colorScheme="purple" size="md">
-              Add Course
-            </Button>
-          </Flex>
-        )}
-        {/* Header */}
-        <VStack spacing={8} align="stretch">
-          <Heading size={{ base: 'lg', md: '2xl' }} color="purple.700" textAlign={{ base: 'center', md: 'left' }}>
-            Explore Courses
+    <Box minH="100vh" py={{ base: 12, md: 20 }}>
+      <Container maxW="7xl" px={{ base: 4, md: 8 }}>
+        <VStack align="start" spacing={3} mb={10}>
+          <Box className="section-label">Course Catalog</Box>
+          <Heading className="section-title">
+            EXPLORE <Box as="span" color="brand.400">COURSES</Box>
           </Heading>
-          <Text fontSize="lg" color="gray.600" maxW="2xl">
-            Learn from industry experts and master new skills with our comprehensive course collection
+          <Text color="#7d8fa3" fontFamily="mono" fontSize="sm" maxW="2xl" mt={2}>
+            Hand-picked, project-first courses to help you ship great work.
           </Text>
         </VStack>
 
-        {/* Filters */}
-        <Flex gap={4} mb={8} flexWrap="wrap">
-          <InputGroup maxW="400px">
+        {isAdmin && (
+          <Flex justify="flex-end" mb={6}>
+            <Button
+              as={RouterLink}
+              to="/admin/create-course"
+              variant="cyan"
+              sx={{
+                clipPath: 'polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%)',
+              }}
+            >
+              + New Course
+            </Button>
+          </Flex>
+        )}
+
+        {/* FILTERS */}
+        <Flex
+          gap={3}
+          mb={10}
+          flexWrap="wrap"
+          p={4}
+          bg="#0d1117"
+          border="1px solid"
+          borderColor="rgba(255,255,255,0.07)"
+          borderRadius="md"
+        >
+          <InputGroup maxW="420px" flex={1}>
             <InputLeftElement>
-              <Icon as={FiSearch} color="gray.400" />
+              <Icon as={FiSearch} color="#7d8fa3" />
             </InputLeftElement>
             <Input
               placeholder="Search courses..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              bg="white"
-              borderColor="gray.200"
-              _focus={{ borderColor: 'blue.500', boxShadow: '0 0 0 1px var(--chakra-colors-blue-500)' }}
+              fontFamily="mono"
+              fontSize="sm"
             />
           </InputGroup>
-          
+
           <Select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            bg="white"
-            borderColor="gray.200"
-            maxW="200px"
-            _focus={{ borderColor: 'blue.500' }}
+            maxW="220px"
+            fontFamily="mono"
+            fontSize="sm"
           >
-            {categories.map((category) => (
-              <option key={category.value} value={category.value}>
-                {category.label}
+            {categories.map((c) => (
+              <option key={c.value} value={c.value} style={{ background: '#0d1117' }}>
+                {c.label}
               </option>
             ))}
           </Select>
         </Flex>
 
-        {/* Course Grid */}
         {filteredCourses.length === 0 ? (
-          <Box textAlign="center" py={12}>
-            <Text fontSize="lg" color="gray.500">
-              No courses found matching your criteria
+          <Box
+            textAlign="center"
+            py={20}
+            bg="#0d1117"
+            border="1px dashed"
+            borderColor="rgba(255,255,255,0.12)"
+          >
+            <Text color="#7d8fa3" fontFamily="mono">
+              No courses match your filters.
             </Text>
           </Box>
         ) : (
           <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing={6}>
-            {filteredCourses.map((course) => (
-              <Card
+            {filteredCourses.map((course, idx) => (
+              <Box
                 key={course._id}
-                shadow="xl"
-                borderRadius="2xl"
+                position="relative"
+                bg="#0d1117"
+                border="1px solid"
+                borderColor="rgba(255,255,255,0.07)"
                 overflow="hidden"
-                bg="white"
-                transition="all 0.3s"
+                display="flex"
+                flexDirection="column"
+                transition="all .35s"
                 _hover={{
+                  borderColor: 'rgba(0,229,255,0.25)',
                   transform: 'translateY(-8px)',
-                  shadow: '2xl'
+                  boxShadow: '0 30px 60px rgba(0,0,0,0.45), 0 0 30px rgba(0,229,255,0.06)',
                 }}
               >
-                {/* Course Image */}
-                <Box position="relative" height="200px">
+                <Text
+                  position="absolute"
+                  top="12px"
+                  right="16px"
+                  fontFamily="display"
+                  color="rgba(255,255,255,0.05)"
+                  fontSize="60px"
+                  lineHeight={1}
+                  pointerEvents="none"
+                  zIndex={1}
+                >
+                  {String(idx + 1).padStart(2, '0')}
+                </Text>
+
+                <Box position="relative" h="200px" overflow="hidden">
                   <Image
                     src={course.imageLink || '/fallback-course.png'}
                     alt={course.title}
-                    width="100%"
-                    height="100%"
+                    w="100%"
+                    h="100%"
                     objectFit="cover"
                     fallbackSrc="/fallback-course.png"
+                    sx={{
+                      filter: 'brightness(0.85)',
+                    }}
+                  />
+                  <Box
+                    position="absolute"
+                    inset={0}
+                    bgGradient="linear(to-t, rgba(13,17,23,0.95) 0%, transparent 60%)"
                   />
                   <Badge
                     position="absolute"
                     top={3}
                     left={3}
-                    colorScheme="green"
-                    borderRadius="full"
-                    px={3}
-                    py={1}
+                    bg="rgba(57,211,83,0.12)"
+                    color="green.400"
+                    border="1px solid"
+                    borderColor="rgba(57,211,83,0.3)"
                   >
-                    Published
+                    Live
                   </Badge>
                   <Badge
                     position="absolute"
                     top={3}
                     right={3}
-                    colorScheme="blue"
-                    borderRadius="full"
-                    px={3}
-                    py={1}
+                    bg="brand.500"
+                    color="#080b0f"
                   >
                     ${course.price}
                   </Badge>
                 </Box>
 
-                <CardBody p={6}>
-                  <VStack align="stretch" spacing={4}>
-                    {/* Course Info */}
-                    <VStack align="start" spacing={2}>
-                      <Heading size="md" color="gray.800" noOfLines={2}>
-                        {course.title}
-                      </Heading>
-                      <Text color="gray.600" fontSize="sm" noOfLines={3}>
-                        {course.description}
-                      </Text>
-                    </VStack>
+                <VStack align="stretch" p={6} spacing={4} flex={1}>
+                  <Heading
+                    fontFamily="display"
+                    fontSize="22px"
+                    fontWeight={400}
+                    color="white"
+                    noOfLines={2}
+                  >
+                    {course.title}
+                  </Heading>
+                  <Text
+                    color="#7d8fa3"
+                    fontSize="13px"
+                    lineHeight="1.6"
+                    noOfLines={3}
+                  >
+                    {course.description}
+                  </Text>
 
-                    {/* Course Stats */}
-                    <HStack spacing={4} color="gray.500" fontSize="sm">
-                      <HStack spacing={1}>
-                        <Icon as={FiStar} />
-                        <Text>4.5</Text>
-                      </HStack>
-                      <HStack spacing={1}>
-                        <Icon as={FiUsers} />
-                        <Text>1.2k students</Text>
-                      </HStack>
-                      <HStack spacing={1}>
-                        <Icon as={FiClock} />
-                        <Text>10h</Text>
-                      </HStack>
+                  <HStack spacing={3} fontSize="12px" color="#7d8fa3" fontFamily="mono">
+                    <HStack spacing={1}>
+                      <Icon as={FiStar} color="yellow.400" /> 4.5
                     </HStack>
-
-                    {/* Course Meta */}
-                    <HStack justify="space-between" fontSize="sm">
-                      <Badge colorScheme="purple" borderRadius="full" px={2} py={1}>
-                        {course.category || 'Programming'}
-                      </Badge>
-                      <Badge colorScheme="orange" borderRadius="full" px={2} py={1}>
-                        {course.level || 'Beginner'}
-                      </Badge>
+                    <HStack spacing={1}>
+                      <Icon as={FiUsers} /> 1.2k
                     </HStack>
+                    <HStack spacing={1}>
+                      <Icon as={FiClock} /> 10h
+                    </HStack>
+                  </HStack>
 
-                    {/* Action Button */}
-                    <Button
-                      as={RouterLink}
-                      to={`/courses/${course._id}`}
-                      colorScheme="blue"
-                      size="lg"
-                      leftIcon={<FiPlay />}
-                      borderRadius="xl"
-                      _hover={{
-                        transform: 'translateY(-2px)',
-                        boxShadow: 'lg'
-                      }}
-                    >
-                      View Course
-                    </Button>
-                  </VStack>
-                </CardBody>
-              </Card>
+                  <HStack spacing={2} flexWrap="wrap">
+                    <Badge variant="subtle" bg="rgba(0,229,255,0.06)" color="brand.300" border="1px solid" borderColor="rgba(0,229,255,0.18)">
+                      {course.category || 'Programming'}
+                    </Badge>
+                    <Badge variant="subtle" bg="rgba(123,97,255,0.08)" color="purple.300" border="1px solid" borderColor="rgba(123,97,255,0.18)">
+                      {course.level || 'Beginner'}
+                    </Badge>
+                  </HStack>
+
+                  <Button
+                    as={RouterLink}
+                    to={`/courses/${course._id}`}
+                    variant="outline"
+                    leftIcon={<FiPlay />}
+                    fontFamily="mono"
+                    fontSize="12px"
+                    letterSpacing="2px"
+                    textTransform="uppercase"
+                    mt="auto"
+                  >
+                    View Course
+                  </Button>
+                </VStack>
+              </Box>
             ))}
           </SimpleGrid>
         )}
       </Container>
     </Box>
-  );
-} 
+  )
+}

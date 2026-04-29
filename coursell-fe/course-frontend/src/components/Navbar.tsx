@@ -1,255 +1,186 @@
-import { useContext } from 'react'
-import { Link as RouterLink } from 'react-router-dom'
+import { useContext, useEffect, useState } from 'react'
+import { Link as RouterLink, useLocation } from 'react-router-dom'
 import {
-  Box,
-  Flex,
-  
-  Text,
-  IconButton,
-  Button,
-  Stack,
-  Collapse,
-  Icon,
-  Link,
-  useColorModeValue,
-  useDisclosure,
-  HStack,
   Avatar,
+  Badge,
+  Box,
+  Button,
+  Collapse,
+  Container,
+  Flex,
+  HStack,
+  Icon,
+  IconButton,
+  Link,
   Menu,
   MenuButton,
-  MenuList,
-  MenuItem,
   MenuDivider,
-  Badge,
-  Container,
-  VStack,
+  MenuItem,
+  MenuList,
+  Spinner,
+  Text,
   Tooltip,
-  Spinner
+  useDisclosure,
+  VStack,
 } from '@chakra-ui/react'
-import { keyframes } from '@emotion/react'
+import { CloseIcon, HamburgerIcon } from '@chakra-ui/icons'
 import {
-  HamburgerIcon,
-  CloseIcon,
-} from '@chakra-ui/icons'
-import { 
-  FiBookOpen, 
-  FiUser, 
-  FiLogOut, 
-  FiHome,
-  FiPlay,
   FiAward,
-  FiZap,
+  FiBookOpen,
+  FiHome,
+  FiLogOut,
+  FiPlay,
   FiShield,
+  FiUser,
+  FiZap,
 } from 'react-icons/fi'
 import { AuthContext } from '../context/AuthContext'
-import { useState } from 'react';
 
-// Animation keyframes
-const glowAnimation = keyframes`
-  0% { box-shadow: 0 0 5px rgba(124, 58, 237, 0.5); }
-  50% { box-shadow: 0 0 20px rgba(124, 58, 237, 0.8); }
-  100% { box-shadow: 0 0 5px rgba(124, 58, 237, 0.5); }
-`;
-
-const floatAnimation = keyframes`
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-5px); }
-`;
+const navItems = [
+  { label: 'Home', to: '/', icon: FiHome },
+  { label: 'Courses', to: '/courses', icon: FiPlay },
+  { label: 'About', to: '/about', icon: FiAward },
+  { label: 'Contact', to: '/contact', icon: FiUser },
+]
 
 export default function Navbar() {
   const { isOpen, onToggle, onClose } = useDisclosure()
   const { user, isAdmin, logout } = useContext(AuthContext)
-  const [loadingLogout, setLoadingLogout] = useState(false);
+  const [loadingLogout, setLoadingLogout] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+  const location = useLocation()
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 30)
+    onScroll()
+    window.addEventListener('scroll', onScroll)
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   const handleLogout = async () => {
-    setLoadingLogout(true);
-    await new Promise((resolve) => setTimeout(resolve, 800)); // Simulate async logout
-    logout();
-    setLoadingLogout(false);
-  };
-
-  const navbarBg = useColorModeValue('rgba(255, 255, 255, 0.95)', 'rgba(26, 32, 44, 0.95)');
-  const textColor = useColorModeValue('gray.700', 'gray.200');
-  const hoverBg = useColorModeValue('purple.50', 'purple.900');
-  const purple500 = useColorModeValue('purple.500', 'purple.300');
-  const borderColor = useColorModeValue('gray.200', 'gray.700');
-  const cardBg = useColorModeValue('white', 'gray.800');
+    setLoadingLogout(true)
+    await new Promise((r) => setTimeout(r, 500))
+    logout()
+    setLoadingLogout(false)
+  }
 
   return (
-    <Box 
-      bg={navbarBg}
-      backdropFilter="blur(20px)"
-      boxShadow="0 4px 20px rgba(0, 0, 0, 0.1)" 
-      borderBottom="1px" 
-      borderColor={borderColor}
+    <Box
+      as="nav"
       position="sticky"
       top={0}
-      zIndex={1000}
+      zIndex={500}
+      transition="background 0.4s, backdrop-filter 0.4s, border-color 0.4s"
+      bg={scrolled ? 'rgba(8,11,15,0.85)' : 'transparent'}
+      backdropFilter={scrolled ? 'blur(20px)' : 'none'}
+      borderBottom="1px solid"
+      borderColor={scrolled ? 'rgba(255,255,255,0.07)' : 'transparent'}
     >
       {loadingLogout && (
-        <Box position="fixed" top={0} left={0} w="100vw" h="100vh" bg="blackAlpha.400" zIndex={2000} display="flex" alignItems="center" justifyContent="center">
-          <Spinner size="xl" color="purple.500" thickness="4px" speed="0.7s" label="Logging out..." />
+        <Box
+          position="fixed"
+          inset={0}
+          bg="rgba(8,11,15,0.7)"
+          zIndex={2000}
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+        >
+          <Spinner size="xl" color="brand.400" thickness="3px" speed="0.7s" />
         </Box>
       )}
-      <Container maxW="7xl" px={{ base: 2, md: 4 }}>
-        <Flex
-          minH={{ base: '60px', md: '80px' }}
-          py={{ base: 2, md: 3 }}
-          px={{ base: 0, md: 4 }}
-          align={'center'}
-          justify={'space-between'}
-          direction={{ base: 'column', md: 'row' }}
-        >
-          {/* Enhanced Logo */}
-          <Flex align="center" minW={0} flex={{ base: 1, md: 'none' }}>
-            <Box
-              as={RouterLink}
-              to="/"
-              display="flex"
-              alignItems="center"
-              _hover={{ transform: 'scale(1.05)' }}
-              transition="all 0.3s ease"
-              position="relative"
-            >
-              <Box
-                p={3}
-                bg="linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)"
-                borderRadius="xl"
-                mr={4}
-                boxShadow="lg"
-                animation={`${glowAnimation} 3s ease-in-out infinite`}
-                _hover={{
-                  animation: `${floatAnimation} 2s ease-in-out infinite`,
-                  boxShadow: "0 10px 30px rgba(124, 58, 237, 0.4)"
-                }}
-              >
-                <Icon as={FiBookOpen} w={7} h={7} color="white" />
-              </Box>
-              <VStack align="start" spacing={0}>
-                <Text
-                  fontSize="3xl"
-                  fontWeight="extrabold"
-                  bg="linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)"
-                  bgClip="text"
-                  letterSpacing="tight"
-                  lineHeight="1"
-                >
-                  Coursell
-                </Text>
-              </VStack>
-            </Box>
-          </Flex>
 
-          {/* Enhanced Desktop Navigation */}
-          <Flex display={{ base: 'none', md: 'flex' }} align="center">
-            <HStack spacing={{ base: 2, md: 8 }}>
-              <Link
-                as={RouterLink}
-                to="/"
-                px={4}
-                py={2}
-                fontSize="md"
-                fontWeight="semibold"
-                color={textColor}
-                position="relative"
-                _before={{
-                  content: '""',
-                  position: 'absolute',
-                  bottom: 0,
-                  left: '50%',
-                  width: '0%',
-                  height: '2px',
-                  bg: purple500,
-                  transition: 'all 0.3s ease',
-                  transform: 'translateX(-50%)'
-                }}
-                _hover={{
-                  color: purple500,
-                  transform: 'translateY(-2px)'
-                }}
-                transition="all 0.3s ease"
-                display="flex"
-                alignItems="center"
-              >
-                <Icon as={FiHome} mr={2} />
-                Home
-              </Link>
-              <Link
-                as={RouterLink}
-                to="/courses"
-                px={4}
-                py={2}
-                fontSize="md"
-                fontWeight="semibold"
-                color={textColor}
-                position="relative"
-                _before={{
-                  content: '""',
-                  position: 'absolute',
-                  bottom: 0,
-                  left: '50%',
-                  width: '0%',
-                  height: '2px',
-                  bg: purple500,
-                  transition: 'all 0.3s ease',
-                  transform: 'translateX(-50%)'
-                }}
-                _hover={{
-                  color: purple500,
-                  transform: 'translateY(-2px)'
-                }}
-                transition="all 0.3s ease"
-                display="flex"
-                alignItems="center"
-              >
-                <Icon as={FiPlay} mr={2} />
-                Courses
-              </Link>
-            </HStack>
-          </Flex>
-
-          {/* Enhanced Right Side */}
-          <Stack
-            flex={{ base: 1, md: 0 }}
-            justify={'flex-end'}
-            direction={'row'}
-            spacing={{ base: 2, md: 4 }}
-            align="center"
+      <Container maxW="7xl" px={{ base: 4, md: 8 }}>
+        <Flex h={{ base: '64px', md: '72px' }} align="center" justify="space-between">
+          {/* LOGO */}
+          <Link
+            as={RouterLink}
+            to="/"
+            display="flex"
+            alignItems="center"
+            gap={2}
+            _hover={{ textDecoration: 'none' }}
           >
+            <Text
+              fontFamily="mono"
+              fontSize="14px"
+              fontWeight={600}
+              color="brand.400"
+              letterSpacing="2px"
+            >
+              COURSE
+              <Box as="span" color="#7d8fa3" fontWeight={300}>
+                LL.
+              </Box>
+              <Box as="span" color="white">
+                dev
+              </Box>
+            </Text>
+          </Link>
+
+          {/* DESKTOP NAV */}
+          <HStack spacing={9} display={{ base: 'none', md: 'flex' }}>
+            {navItems.map((item) => {
+              const active = location.pathname === item.to
+              return (
+                <Link
+                  key={item.to}
+                  as={RouterLink}
+                  to={item.to}
+                  fontFamily="mono"
+                  fontSize="12px"
+                  letterSpacing="2px"
+                  textTransform="uppercase"
+                  fontWeight={500}
+                  color={active ? 'brand.400' : '#7d8fa3'}
+                  position="relative"
+                  _hover={{ color: 'brand.400', textDecoration: 'none' }}
+                  _after={{
+                    content: '""',
+                    position: 'absolute',
+                    bottom: '-6px',
+                    left: 0,
+                    height: '1px',
+                    width: active ? '100%' : '0%',
+                    bg: 'brand.400',
+                    transition: 'width .3s',
+                  }}
+                  sx={{ '&:hover::after': { width: '100%' } }}
+                >
+                  {item.label}
+                </Link>
+              )
+            })}
+          </HStack>
+
+          {/* RIGHT SIDE */}
+          <HStack spacing={3}>
             {!user ? (
               <>
                 <Button
                   as={RouterLink}
                   to="/login"
                   variant="ghost"
-                  colorScheme="purple"
-                  size="md"
-                  fontWeight="semibold"
-                  fontSize="sm"
-                  _hover={{
-                    bg: hoverBg,
-                    transform: 'translateY(-2px)',
-                    boxShadow: 'md'
-                  }}
-                  transition="all 0.3s ease"
+                  size="sm"
+                  fontFamily="mono"
+                  fontSize="12px"
+                  letterSpacing="2px"
+                  textTransform="uppercase"
+                  display={{ base: 'none', md: 'inline-flex' }}
                 >
                   Sign In
                 </Button>
                 <Button
                   as={RouterLink}
                   to="/register"
-                  colorScheme="purple"
-                  size="md"
-                  fontWeight="bold"
-                  fontSize="sm"
-                  bg="linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)"
-                  _hover={{
-                    transform: 'translateY(-3px)',
-                    boxShadow: '0 10px 25px rgba(124, 58, 237, 0.4)',
-                    bg: 'linear-gradient(135deg, #4338ca 0%, #6d28d9 100%)'
+                  variant="cyan"
+                  size="sm"
+                  display={{ base: 'none', md: 'inline-flex' }}
+                  rightIcon={<Icon as={FiZap} />}
+                  sx={{
+                    clipPath:
+                      'polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%)',
                   }}
-                  transition="all 0.3s ease"
-                  leftIcon={<FiZap />}
                 >
                   Get Started
                 </Button>
@@ -258,16 +189,12 @@ export default function Navbar() {
                     as={RouterLink}
                     to="/admin/login"
                     variant="outline"
-                    colorScheme="purple"
-                    size="md"
+                    size="sm"
                     leftIcon={<FiShield />}
-                    fontSize="sm"
-                    _hover={{
-                      bg: hoverBg,
-                      transform: 'translateY(-2px)',
-                      borderColor: purple500
-                    }}
-                    transition="all 0.3s ease"
+                    fontFamily="mono"
+                    fontSize="11px"
+                    letterSpacing="1.5px"
+                    display={{ base: 'none', md: 'inline-flex' }}
                   >
                     Admin
                   </Button>
@@ -275,310 +202,194 @@ export default function Navbar() {
               </>
             ) : (
               <HStack spacing={3}>
-                {/* Admin Badge */}
                 {isAdmin && (
                   <Badge
-                    colorScheme="purple"
-                    variant="solid"
-                    px={3}
-                    py={1}
-                    borderRadius="full"
-                    fontSize="xs"
-                    fontWeight="bold"
-                    bg="linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)"
-                    boxShadow="md"
-                    animation={`${glowAnimation} 2s ease-in-out infinite`}
+                    bg="rgba(255,77,109,0.12)"
+                    color="pink.400"
+                    border="1px solid"
+                    borderColor="rgba(255,77,109,0.35)"
+                    display={{ base: 'none', sm: 'inline-flex' }}
+                    alignItems="center"
+                    gap={1}
                   >
-                    <Icon as={FiAward} mr={1} />
-                    ADMIN
+                    <Icon as={FiShield} /> Admin
                   </Badge>
                 )}
-                
                 <Menu>
                   <MenuButton
                     as={Button}
-                    rounded={'full'}
-                    variant={'link'}
-                    cursor={'pointer'}
+                    rounded="full"
+                    variant="ghost"
+                    cursor="pointer"
                     minW={0}
-                    _hover={{
-                      transform: 'scale(1.05)'
-                    }}
-                    transition="all 0.2s ease"
+                    p={1}
+                    _hover={{ bg: 'rgba(0,229,255,0.06)' }}
                   >
                     <Avatar
-                      size={'md'}
+                      size="sm"
                       name={user.name}
-                      src={user.role === 'admin' ? '/fallback-avatar-admin.png' : '/fallback-avatar-user.svg'}
-                      bg={user.role === 'admin' ? 'linear-gradient(135deg, #805ad4 0%, #6b46c1 100%)' : 'linear-gradient(135deg, #4f46e5 0%, #4338ca 100%)'}
+                      bg="purple.500"
                       color="white"
-                      boxShadow="md"
-                      transition="all 0.2s ease"
                     />
                   </MenuButton>
-                  <MenuList
-                    bg={cardBg}
-                    borderColor={borderColor}
-                    boxShadow="xl"
-                    borderRadius="xl"
-                    py={2}
-                  >
-                    <MenuItem
-                      as={RouterLink}
-                      to={'/profile'}
-                      icon={<FiUser color={purple500} />}
-                      _hover={{ bg: hoverBg }}
-                      color={textColor}
-                      borderRadius="md"
-                      mx={2}
-                      mb={1}
-                    >
+                  <MenuList borderRadius="md" minW="220px">
+                    <MenuItem as={RouterLink} to="/profile" icon={<FiUser />}>
                       My Profile
                     </MenuItem>
-                    {user && user.role === 'user' && (
+                    {user.role === 'user' && (
                       <MenuItem
                         as={RouterLink}
-                        to={'/dashboard'}
-                        icon={<FiBookOpen color={purple500} />}
-                        _hover={{ bg: hoverBg }}
-                        color={textColor}
-                        borderRadius="md"
-                        mx={2}
-                        mb={1}
+                        to="/dashboard"
+                        icon={<FiBookOpen />}
                       >
-                        My Dashboard
+                        Dashboard
                       </MenuItem>
                     )}
                     {isAdmin && (
                       <MenuItem
                         as={RouterLink}
-                        to={'/admin/dashboard'}
-                        icon={<FiShield color={purple500} />}
-                        _hover={{ bg: hoverBg }}
-                        color={textColor}
-                        borderRadius="md"
-                        mx={2}
-                        mb={1}
+                        to="/admin/dashboard"
+                        icon={<FiShield />}
                       >
                         Admin Dashboard
                       </MenuItem>
                     )}
-                    <MenuDivider borderColor={borderColor} mx={2} />
-                    <MenuItem
-                      icon={<FiLogOut color={purple500} />}
-                      onClick={handleLogout}
-                      _hover={{ bg: hoverBg }}
-                      color={textColor}
-                      borderRadius="md"
-                      mx={2}
-                      mt={1}
-                    >
+                    <MenuDivider borderColor="rgba(255,255,255,0.08)" />
+                    <MenuItem onClick={handleLogout} icon={<FiLogOut />}>
                       Logout
                     </MenuItem>
                   </MenuList>
                 </Menu>
-                {user && (
-                  <IconButton
-                    aria-label="Logout"
-                    icon={<FiLogOut />}
-                    colorScheme="purple"
-                    variant="ghost"
-                    onClick={handleLogout}
-                    ml={2}
-                    _hover={{ bg: hoverBg, color: purple500 }}
-                    title="Logout"
-                    isLoading={loadingLogout}
-                  />
-                )}
               </HStack>
             )}
 
-            {/* Enhanced Mobile Toggle Button */}
             <IconButton
               onClick={onToggle}
               icon={
                 isOpen ? (
-                  <CloseIcon w={5} h={5} color={textColor} />
+                  <CloseIcon w={3} h={3} />
                 ) : (
-                  <HamburgerIcon w={5} h={5} color={textColor} />
+                  <HamburgerIcon w={5} h={5} />
                 )
               }
-              variant={'ghost'}
-              aria-label={'Toggle Navigation'}
+              variant="ghost"
+              aria-label="Toggle Navigation"
               display={{ md: 'none' }}
-              _hover={{ bg: hoverBg, transform: 'scale(1.1)' }}
-              transition="all 0.2s ease"
-              size="md"
+              size="sm"
             />
-          </Stack>
+          </HStack>
         </Flex>
 
-        {/* Enhanced Mobile Menu */}
+        {/* MOBILE MENU */}
         <Collapse in={isOpen} animateOpacity>
           <Box
-            bg={cardBg}
-            p={6}
             display={{ md: 'none' }}
-            borderTop="1px"
-            borderColor={borderColor}
-            borderRadius="0 0 2xl 2xl"
-            boxShadow="xl"
+            pb={4}
+            pt={2}
+            borderTop="1px solid"
+            borderColor="rgba(255,255,255,0.07)"
           >
-            <VStack spacing={4} align="stretch">
-              <Link
-                as={RouterLink}
-                to="/"
-                onClick={onClose}
-                py={3}
-                px={4}
-                fontSize="md"
-                fontWeight="semibold"
-                color={textColor}
-                _hover={{ bg: hoverBg, color: purple500, borderRadius: 'lg' }}
-                transition="all 0.2s ease"
-                display="flex"
-                alignItems="center"
-              >
-                <Icon as={FiHome} mr={3} />
-                Home
-              </Link>
-              <Link
-                as={RouterLink}
-                to="/courses"
-                onClick={onClose}
-                py={3}
-                px={4}
-                fontSize="md"
-                fontWeight="semibold"
-                color={textColor}
-                _hover={{ bg: hoverBg, color: purple500, borderRadius: 'lg' }}
-                transition="all 0.2s ease"
-                display="flex"
-                alignItems="center"
-              >
-                <Icon as={FiPlay} mr={3} />
-                Courses
-              </Link>
+            <VStack align="stretch" spacing={1}>
+              {navItems.map((item) => (
+                <Link
+                  key={item.to}
+                  as={RouterLink}
+                  to={item.to}
+                  onClick={onClose}
+                  px={4}
+                  py={3}
+                  fontFamily="mono"
+                  fontSize="12px"
+                  letterSpacing="2px"
+                  textTransform="uppercase"
+                  color="#7d8fa3"
+                  _hover={{ color: 'brand.400', bg: 'rgba(0,229,255,0.05)' }}
+                  display="flex"
+                  alignItems="center"
+                  gap={3}
+                >
+                  <Icon as={item.icon} /> {item.label}
+                </Link>
+              ))}
               {!user ? (
-                <>
-                  <Link
+                <VStack align="stretch" spacing={2} pt={2}>
+                  <Button
                     as={RouterLink}
                     to="/login"
+                    variant="ghost"
                     onClick={onClose}
-                    py={3}
-                    px={4}
-                    fontSize="md"
-                    fontWeight="semibold"
-                    color={textColor}
-                    _hover={{ bg: hoverBg, color: purple500, borderRadius: 'lg' }}
-                    transition="all 0.2s ease"
+                    fontFamily="mono"
+                    letterSpacing="2px"
+                    textTransform="uppercase"
+                    fontSize="12px"
                   >
                     Sign In
-                  </Link>
-                  <Link
+                  </Button>
+                  <Button
                     as={RouterLink}
                     to="/register"
+                    variant="cyan"
                     onClick={onClose}
-                    py={3}
-                    px={4}
-                    fontSize="md"
-                    fontWeight="semibold"
-                    color={textColor}
-                    _hover={{ bg: hoverBg, color: purple500, borderRadius: 'lg' }}
-                    transition="all 0.2s ease"
                   >
                     Get Started
-                  </Link>
-                  <Link
+                  </Button>
+                  <Button
                     as={RouterLink}
                     to="/admin/login"
+                    variant="outline"
                     onClick={onClose}
-                    py={3}
-                    px={4}
-                    fontSize="md"
-                    fontWeight="semibold"
-                    color={textColor}
-                    _hover={{ bg: hoverBg, color: purple500, borderRadius: 'lg' }}
-                    transition="all 0.2s ease"
-                    display="flex"
-                    alignItems="center"
+                    leftIcon={<FiShield />}
+                    fontFamily="mono"
+                    letterSpacing="2px"
+                    textTransform="uppercase"
+                    fontSize="11px"
                   >
-                    <Icon as={FiShield} mr={3} />
-                    Admin Login
-                  </Link>
-                </>
+                    Admin
+                  </Button>
+                </VStack>
               ) : (
-                <VStack align="stretch" spacing={2}>
-                  <Link
+                <VStack align="stretch" spacing={2} pt={2}>
+                  <Button
                     as={RouterLink}
-                    to={'/profile'}
+                    to="/profile"
+                    variant="ghost"
                     onClick={onClose}
-                    py={3}
-                    px={4}
-                    fontSize="md"
-                    fontWeight="semibold"
-                    color={textColor}
-                    _hover={{ bg: hoverBg, color: purple500, borderRadius: 'lg' }}
-                    transition="all 0.2s ease"
-                    display="flex"
-                    alignItems="center"
+                    leftIcon={<FiUser />}
                   >
-                    <Icon as={FiUser} mr={3} />
-                    My Profile
-                  </Link>
-                  {user && user.role === 'user' && (
-                    <Link
+                    Profile
+                  </Button>
+                  {user.role === 'user' && (
+                    <Button
                       as={RouterLink}
-                      to={'/dashboard'}
+                      to="/dashboard"
+                      variant="ghost"
                       onClick={onClose}
-                      py={3}
-                      px={4}
-                      fontSize="md"
-                      fontWeight="semibold"
-                      color={textColor}
-                      _hover={{ bg: hoverBg, color: purple500, borderRadius: 'lg' }}
-                      transition="all 0.2s ease"
-                      display="flex"
-                      alignItems="center"
+                      leftIcon={<FiBookOpen />}
                     >
-                      <Icon as={FiBookOpen} mr={3} />
-                      My Dashboard
-                    </Link>
+                      Dashboard
+                    </Button>
                   )}
                   {isAdmin && (
-                    <Link
+                    <Button
                       as={RouterLink}
-                      to={'/admin/dashboard'}
+                      to="/admin/dashboard"
+                      variant="ghost"
                       onClick={onClose}
-                      py={3}
-                      px={4}
-                      fontSize="md"
-                      fontWeight="semibold"
-                      color={textColor}
-                      _hover={{ bg: hoverBg, color: purple500, borderRadius: 'lg' }}
-                      transition="all 0.2s ease"
-                      display="flex"
-                      alignItems="center"
+                      leftIcon={<FiShield />}
                     >
-                      <Icon as={FiShield} mr={3} />
                       Admin Dashboard
-                    </Link>
+                    </Button>
                   )}
-                  <Link
-                    onClick={() => { onClose(); handleLogout(); }}
-                    py={3}
-                    px={4}
-                    fontSize="md"
-                    fontWeight="semibold"
-                    color={textColor}
-                    _hover={{ bg: hoverBg, color: purple500, borderRadius: 'lg' }}
-                    transition="all 0.2s ease"
-                    display="flex"
-                    alignItems="center"
+                  <Button
+                    onClick={() => {
+                      onClose()
+                      handleLogout()
+                    }}
+                    variant="outline"
+                    leftIcon={<FiLogOut />}
                   >
-                    <Icon as={FiLogOut} mr={3} />
                     Logout
-                  </Link>
+                  </Button>
                 </VStack>
               )}
             </VStack>

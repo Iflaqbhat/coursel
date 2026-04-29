@@ -122,21 +122,67 @@ app.use(notFound);
 // Error handling middleware
 app.use(errorHandler);
 
-// Connect to MongoDB
-const connectDB = async () => {
+// Connect to MongoDB (with automatic in-memory fallback)
+const Admin = require('./models/admin');
+
+const seedDefaultAdmin = async () => {
   try {
-    const mongoUrl = config.mongoUrl;
-    logger.info(`Attempting to connect to MongoDB: ${mongoUrl.replace(/\/\/.*@/, '//***:***@')}`);
-    
+    const existing = await Admin.findOne({ username: 'admin' });
+    if (!existing) {
+      await Admin.create({ username: 'admin', password: 'admin123' });
+      logger.info('Seeded default admin: username=admin password=admin123');
+    } else {
+      logger.info('Default admin already exists');
+    }
+  } catch (e) {
+    logger.error('Failed to seed default admin:', e.message);
+  }
+};
+
+const connectDB = async () => {
+  const mongoUrl = config.mongoUrl;
+  const sanitized = mongoUrl.replace(/\/\/.*@/, '//***:***@');
+
+  // Try the configured MongoDB URL first (Atlas / etc.)
+  try {
+    logger.info(`Attempting to connect to MongoDB: ${sanitized}`);
     const conn = await mongoose.connect(mongoUrl, {
       serverSelectionTimeoutMS: 5000,
       socketTimeoutMS: 45000,
     });
-
     logger.info(`MongoDB Connected: ${conn.connection.host}`);
+    await seedDefaultAdmin();
+    return;
   } catch (error) {
-    logger.error('MongoDB connection error:', error.message);
-    logger.error('Please check your MONGO_URL in .env file or ensure MongoDB is running locally');
+    logger.error(`Primary MongoDB connection failed: ${error.message}`);
+    logger.info('Falling back to in-memory MongoDB for local development...');
+  }
+
+  // Fallback: spin up an in-process MongoDB (zero external setup)
+  try {
+    const { MongoMemoryServer } = require('mongodb-memory-server');
+    const memServer = await MongoMemoryServer.create({
+      instance: { dbName: config.dbName || 'coursell' },
+    });
+    const memUri = memServer.getUri();
+    const conn = await mongoose.connect(memUri, {
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
+    });
+    logger.info(`In-memory MongoDB Connected: ${conn.connection.host}`);
+    logger.info('NOTE: Data is ephemeral and resets on server restart.');
+
+    // Stop in-memory server gracefully on shutdown
+    const stopMem = async () => {
+      try { await memServer.stop(); } catch (_) {}
+    };
+    process.on('SIGTERM', stopMem);
+    process.on('SIGINT', stopMem);
+
+    await seedDefaultAdmin();
+  } catch (memError) {
+    logger.error('In-memory MongoDB failed to start:', memError.message);
+    logger.error('Please install MongoDB locally or fix MONGO_URL in .env');
     process.exit(1);
   }
 };

@@ -205,6 +205,74 @@ router.get("/courses", adminAuth, async (req, res) => {
   }
 });
 
+// Detect a video's duration (in seconds) from its URL.
+// Supports YouTube (page scrape) and Vimeo (oEmbed). No API keys required.
+// Direct video file URLs return 0 — those are detected client-side via HTML5.
+router.get("/video/duration", async (req, res) => {
+  try {
+    const url = String(req.query.url || "").trim();
+    if (!url) {
+      return res.status(400).json({ message: "Missing url query param" });
+    }
+
+    let duration = 0;
+    let provider = "unknown";
+
+    // ---- YouTube ----
+    const ytMatch = url.match(
+      /(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|v\/|shorts\/))([\w-]{11})/
+    );
+    if (ytMatch) {
+      provider = "youtube";
+      const videoId = ytMatch[1];
+      try {
+        const r = await fetch(`https://www.youtube.com/watch?v=${videoId}`, {
+          headers: {
+            "User-Agent":
+              "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36",
+            "Accept-Language": "en-US,en;q=0.9",
+          },
+        });
+        const html = await r.text();
+        const m =
+          html.match(/"lengthSeconds":"(\d+)"/) ||
+          html.match(/"approxDurationMs":"(\d+)"/);
+        if (m) {
+          duration = m[0].includes("approxDurationMs")
+            ? Math.round(Number(m[1]) / 1000)
+            : Number(m[1]);
+        }
+      } catch (e) {
+        console.warn("YouTube scrape failed:", e.message);
+      }
+      return res.json({ duration, provider });
+    }
+
+    // ---- Vimeo ----
+    if (/vimeo\.com/.test(url)) {
+      provider = "vimeo";
+      try {
+        const r = await fetch(
+          `https://vimeo.com/api/oembed.json?url=${encodeURIComponent(url)}`
+        );
+        if (r.ok) {
+          const data = await r.json();
+          if (typeof data.duration === "number") duration = data.duration;
+        }
+      } catch (e) {
+        console.warn("Vimeo oEmbed failed:", e.message);
+      }
+      return res.json({ duration, provider });
+    }
+
+    // ---- Direct video file: client should detect via HTML5 ----
+    return res.json({ duration: 0, provider: "direct" });
+  } catch (err) {
+    console.error("Duration detection error:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 // Bulk get courses (public)
 router.get("/course/bulk", async (req, res) => {
   try {

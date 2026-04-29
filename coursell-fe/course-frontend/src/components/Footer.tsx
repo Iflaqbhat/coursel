@@ -1,64 +1,46 @@
 import {
   Box,
   Container,
+  Divider,
+  Flex,
+  HStack,
+  Heading,
+  Icon,
+  Link,
+  SimpleGrid,
   Stack,
   Text,
-  Link,
-  useColorModeValue,
-  Divider,
-  HStack,
   VStack,
-  Icon,
-  SimpleGrid,
-  Heading,
-} from '@chakra-ui/react';
-import { Link as RouterLink } from 'react-router-dom';
-import { 
-  FiMail, 
-  FiPhone, 
-  FiMapPin, 
-  FiFacebook, 
-  FiTwitter, 
-  FiInstagram, 
-  FiLinkedin,
+} from '@chakra-ui/react'
+import { Link as RouterLink } from 'react-router-dom'
+import {
+  FiFacebook,
   FiGithub,
-  FiHeart
-} from 'react-icons/fi';
+  FiHeart,
+  FiInstagram,
+  FiLinkedin,
+  FiMail,
+  FiMapPin,
+  FiPhone,
+  FiTwitter,
+} from 'react-icons/fi'
 
 const Footer = () => {
-  const bgColor = useColorModeValue('gray.50', 'gray.900');
-  const borderColor = useColorModeValue('gray.200', 'gray.700');
-  const textColor = useColorModeValue('gray.600', 'gray.400');
-  const headingColor = useColorModeValue('gray.800', 'white');
-
-  const currentYear = new Date().getFullYear();
+  const currentYear = new Date().getFullYear()
 
   const footerLinks = {
     platform: [
       { name: 'Browse Courses', href: '/courses' },
-      { name: 'Learning Paths', href: '/learning-paths' },
-      { name: 'Certificates', href: '/certificates' },
-      { name: 'Live Sessions', href: '/live-sessions' },
+      { name: 'Learning Paths', href: '/courses' },
+      { name: 'Certificates', href: '/courses' },
+      { name: 'Live Sessions', href: '/courses' },
     ],
     company: [
-      { name: 'About Us', href: '/about' },
-      { name: 'Careers', href: '/careers' },
-      { name: 'Press', href: '/press' },
-      { name: 'Partners', href: '/partners' },
+      { name: 'About', href: '/about' },
+      { name: 'Contact', href: '/contact' },
+      { name: 'Help', href: '/help' },
     ],
-    support: [
-      { name: 'Help Center', href: '/help' },
-      { name: 'Contact Us', href: '/contact' },
-      { name: 'Privacy Policy', href: '/privacy' },
-      { name: 'Terms of Service', href: '/terms' },
-    ],
-    resources: [
-      { name: 'Blog', href: '/blog' },
-      { name: 'Tutorials', href: '/tutorials' },
-      { name: 'Community', href: '/community' },
-      { name: 'Events', href: '/events' },
-    ],
-  };
+  }
 
   const socialLinks = [
     { name: 'Facebook', icon: FiFacebook, href: 'https://facebook.com' },
@@ -66,172 +48,161 @@ const Footer = () => {
     { name: 'Instagram', icon: FiInstagram, href: 'https://instagram.com' },
     { name: 'LinkedIn', icon: FiLinkedin, href: 'https://linkedin.com' },
     { name: 'GitHub', icon: FiGithub, href: 'https://github.com' },
-  ];
+  ]
 
   return (
-    <Box bg={bgColor} borderTop="1px solid" borderColor={borderColor}>
-      <Container maxW="7xl" py={12}>
-        <Stack spacing={8}>
-          {/* Main Footer Content */}
-          <SimpleGrid columns={{ base: 1, md: 2, lg: 5 }} spacing={8}>
-            {/* Brand Section */}
+    <Box
+      as="footer"
+      bg="#0d1117"
+      borderTop="1px solid"
+      borderColor="rgba(255,255,255,0.07)"
+      mt={16}
+    >
+      <Container maxW="7xl" py={14} px={{ base: 4, md: 8 }}>
+        <Stack spacing={10}>
+          <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={10}>
             <VStack align="start" spacing={4}>
-              <Heading size="lg" color="purple.600">
-                Coursell
-              </Heading>
-              <Text color={textColor} fontSize="sm" lineHeight="1.6">
-                Transform your career with expert-led courses. Learn at your own pace 
-                and unlock your full potential with our comprehensive learning platform.
+              <Text
+                fontFamily="mono"
+                fontSize="14px"
+                letterSpacing="2px"
+                color="brand.400"
+              >
+                COURSE
+                <Box as="span" color="#7d8fa3" fontWeight={300}>
+                  LL.
+                </Box>
+                <Box as="span" color="white">
+                  dev
+                </Box>
               </Text>
-              
-              {/* Contact Info */}
+              <Text color="#7d8fa3" fontSize="sm" lineHeight="1.7">
+                A premium learning platform for developers and creators.
+                Curated courses, real projects, and a focused learning
+                experience.
+              </Text>
               <VStack align="start" spacing={2}>
-                <HStack spacing={2} color={textColor} fontSize="sm">
-                  <Icon as={FiMail} />
-                  <Text>hello@coursell.com</Text>
+                <HStack color="#7d8fa3" fontSize="sm" spacing={2}>
+                  <Icon as={FiMail} color="brand.400" />
+                  <Text>hello@coursell.dev</Text>
                 </HStack>
-                <HStack spacing={2} color={textColor} fontSize="sm">
-                  <Icon as={FiPhone} />
-                  <Text>+1 (555) 123-4567</Text>
+                <HStack color="#7d8fa3" fontSize="sm" spacing={2}>
+                  <Icon as={FiPhone} color="brand.400" />
+                  <Text>+91 6005 154 365</Text>
                 </HStack>
-                <HStack spacing={2} color={textColor} fontSize="sm">
-                  <Icon as={FiMapPin} />
-                  <Text>San Francisco, CA</Text>
+                <HStack color="#7d8fa3" fontSize="sm" spacing={2}>
+                  <Icon as={FiMapPin} color="brand.400" />
+                  <Text>Kashmir, India</Text>
                 </HStack>
               </VStack>
             </VStack>
 
-            {/* Platform Links */}
             <VStack align="start" spacing={4}>
-              <Heading size="md" color={headingColor}>
+              <Heading
+                size="sm"
+                fontFamily="mono"
+                color="purple.300"
+                letterSpacing="3px"
+                textTransform="uppercase"
+              >
                 Platform
               </Heading>
               <VStack align="start" spacing={2}>
-                {footerLinks.platform.map((link) => (
+                {footerLinks.platform.map((l) => (
                   <Link
-                    key={link.name}
+                    key={l.name}
                     as={RouterLink}
-                    to={link.href}
-                    color={textColor}
+                    to={l.href}
+                    color="#7d8fa3"
                     fontSize="sm"
-                    _hover={{ color: 'purple.500', textDecoration: 'none' }}
-                    transition="color 0.2s"
+                    _hover={{ color: 'brand.400' }}
                   >
-                    {link.name}
+                    {l.name}
                   </Link>
                 ))}
               </VStack>
             </VStack>
 
-            {/* Company Links */}
             <VStack align="start" spacing={4}>
-              <Heading size="md" color={headingColor}>
+              <Heading
+                size="sm"
+                fontFamily="mono"
+                color="purple.300"
+                letterSpacing="3px"
+                textTransform="uppercase"
+              >
                 Company
               </Heading>
               <VStack align="start" spacing={2}>
-                {footerLinks.company.map((link) => (
+                {footerLinks.company.map((l) => (
                   <Link
-                    key={link.name}
+                    key={l.name}
                     as={RouterLink}
-                    to={link.href}
-                    color={textColor}
+                    to={l.href}
+                    color="#7d8fa3"
                     fontSize="sm"
-                    _hover={{ color: 'purple.500', textDecoration: 'none' }}
-                    transition="color 0.2s"
+                    _hover={{ color: 'brand.400' }}
                   >
-                    {link.name}
-          </Link>
+                    {l.name}
+                  </Link>
                 ))}
               </VStack>
             </VStack>
 
-            {/* Support Links */}
             <VStack align="start" spacing={4}>
-              <Heading size="md" color={headingColor}>
-                Support
+              <Heading
+                size="sm"
+                fontFamily="mono"
+                color="purple.300"
+                letterSpacing="3px"
+                textTransform="uppercase"
+              >
+                Stay Updated
               </Heading>
-              <VStack align="start" spacing={2}>
-                {footerLinks.support.map((link) => (
+              <Text color="#7d8fa3" fontSize="sm">
+                New courses every month. No spam, ever.
+              </Text>
+              <HStack spacing={3}>
+                {socialLinks.map((s) => (
                   <Link
-                    key={link.name}
-                    as={RouterLink}
-                    to={link.href}
-                    color={textColor}
-                    fontSize="sm"
-                    _hover={{ color: 'purple.500', textDecoration: 'none' }}
-                    transition="color 0.2s"
+                    key={s.name}
+                    href={s.href}
+                    isExternal
+                    color="#7d8fa3"
+                    p={2}
+                    border="1px solid"
+                    borderColor="rgba(255,255,255,0.12)"
+                    borderRadius="md"
+                    _hover={{ color: 'brand.400', borderColor: 'brand.400' }}
                   >
-                    {link.name}
-          </Link>
+                    <Icon as={s.icon} w={4} h={4} />
+                  </Link>
                 ))}
-              </VStack>
-            </VStack>
-
-            {/* Resources Links */}
-            <VStack align="start" spacing={4}>
-              <Heading size="md" color={headingColor}>
-                Resources
-              </Heading>
-              <VStack align="start" spacing={2}>
-                {footerLinks.resources.map((link) => (
-                  <Link
-                    key={link.name}
-                    as={RouterLink}
-                    to={link.href}
-                    color={textColor}
-                    fontSize="sm"
-                    _hover={{ color: 'purple.500', textDecoration: 'none' }}
-                    transition="color 0.2s"
-                  >
-                    {link.name}
-          </Link>
-                ))}
-              </VStack>
+              </HStack>
             </VStack>
           </SimpleGrid>
 
-          <Divider borderColor={borderColor} />
+          <Divider borderColor="rgba(255,255,255,0.07)" />
 
-          {/* Bottom Section */}
-          <Stack
+          <Flex
             direction={{ base: 'column', md: 'row' }}
             justify="space-between"
-            align={{ base: 'start', md: 'center' }}
-            spacing={4}
+            align="center"
+            gap={3}
           >
-            {/* Copyright */}
-            <Text color={textColor} fontSize="sm">
-              © {currentYear} Coursell. All rights reserved.
+            <Text fontSize="xs" color="#3d4f63" fontFamily="mono" letterSpacing="1px">
+              © {currentYear} COURSELL · ALL RIGHTS RESERVED
             </Text>
-
-            {/* Social Links */}
-            <HStack spacing={4}>
-              {socialLinks.map((social) => (
-                <Link
-                  key={social.name}
-                  href={social.href}
-                  isExternal
-                  color={textColor}
-                  _hover={{ color: 'purple.500' }}
-                  transition="color 0.2s"
-                  aria-label={social.name}
-                >
-                  <Icon as={social.icon} w={5} h={5} />
-          </Link>
-              ))}
+            <HStack spacing={2} color="#7d8fa3" fontSize="xs">
+              <Text>Crafted with</Text>
+              <Icon as={FiHeart} color="pink.400" />
+              <Text>from Kashmir</Text>
             </HStack>
-          </Stack>
-
-          {/* Made with Love */}
-          <Box textAlign="center" pt={4}>
-            <Text color={textColor} fontSize="xs">
-              Made with <Icon as={FiHeart} color="red.400" /> by the Coursell team
-            </Text>
-          </Box>
+          </Flex>
         </Stack>
       </Container>
     </Box>
-  );
-};
+  )
+}
 
-export default Footer; 
+export default Footer

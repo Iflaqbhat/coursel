@@ -1,255 +1,244 @@
-import { useState, useEffect, useContext } from 'react';
-import { 
-  Box, 
-  Container, 
-  Heading, 
-  Text, 
-  VStack, 
-  HStack, 
-  Card, 
-  CardBody, 
-  CardHeader,
-  SimpleGrid,
+import { useContext, useEffect, useState } from 'react'
+import {
   Badge,
+  Box,
   Button,
-  Icon,
-  useToast,
-  Spinner,
+  Card,
+  CardBody,
+  CardHeader,
   Center,
+  Container,
+  HStack,
+  Heading,
+  Icon,
+  Image,
+  Progress,
+  SimpleGrid,
+  Spinner,
   Stat,
   StatLabel,
   StatNumber,
-  StatHelpText,
-  Image,
-  Progress
-} from '@chakra-ui/react';
-import { 
-  FiBookOpen, 
-  FiPlay, 
-  FiClock, 
+  Text,
+  VStack,
+  useToast,
+} from '@chakra-ui/react'
+import {
   FiAward,
-  FiUser,
+  FiBookOpen,
+  FiCalendar,
+  FiClock,
   FiMail,
-  FiCalendar
-} from 'react-icons/fi';
-import { Link as RouterLink } from 'react-router-dom';
-import axios from 'axios';
-import { AuthContext } from '../context/AuthContext';
+  FiPlay,
+  FiUser,
+} from 'react-icons/fi'
+import { Link as RouterLink } from 'react-router-dom'
+import axios from 'axios'
+import { AuthContext } from '../context/AuthContext'
 
 interface Course {
-  _id: string;
-  title: string;
-  description: string;
-  price: number;
-  thumbnail: string;
-  category: string;
-  level: string;
-  duration: string;
-  videos: any[];
+  _id: string
+  title: string
+  description: string
+  price: number
+  thumbnail: string
+  category: string
+  level: string
+  duration: string
+  videos: any[]
+  imageLink?: string
 }
 
 export default function Dashboard() {
-  const [purchasedCourses, setPurchasedCourses] = useState<Course[]>([]);
-  const [loading, setLoading] = useState(true);
-  const { user } = useContext(AuthContext);
-  const toast = useToast();
+  const [purchasedCourses, setPurchasedCourses] = useState<Course[]>([])
+  const [loading, setLoading] = useState(true)
+  const { user } = useContext(AuthContext)
+  const toast = useToast()
 
   useEffect(() => {
-    fetchPurchasedCourses();
-  }, []);
+    fetchPurchasedCourses()
+  }, [])
 
   const fetchPurchasedCourses = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/user/purchases`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setPurchasedCourses(response.data.courses || []);
+      const token = localStorage.getItem('token')
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/user/purchases`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
+      setPurchasedCourses(response.data.courses || [])
     } catch (error) {
-      console.error('Error fetching purchased courses:', error);
       toast({
         title: 'Error',
         description: 'Failed to load your courses',
         status: 'error',
         duration: 3000,
-        isClosable: true,
-      });
+      })
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
-  const getProgressPercentage = () => {
-    // Mock progress - in real app this would come from backend
-    return Math.floor(Math.random() * 100);
-  };
+  const getProgressPercentage = () => Math.floor(Math.random() * 100)
 
   if (loading) {
     return (
-      <Box minH="100vh" bg="gray.50">
+      <Box minH="100vh">
         <Center h="100vh">
           <VStack spacing={4}>
-            <Spinner size="xl" color="purple.500" />
-            <Text color="gray.600">Loading your dashboard...</Text>
+            <Spinner size="xl" color="brand.400" />
+            <Text color="#7d8fa3" fontFamily="mono" letterSpacing="2px" textTransform="uppercase" fontSize="12px">
+              Loading dashboard...
+            </Text>
           </VStack>
         </Center>
       </Box>
-    );
+    )
   }
 
+  const totalVideos = purchasedCourses.reduce(
+    (acc, c) => acc + (c.videos?.length || 0),
+    0
+  )
+  const totalHours = purchasedCourses.reduce((acc, c) => {
+    const d = parseInt(c.duration?.replace(/\D/g, '') || '0')
+    return acc + d
+  }, 0)
+
   return (
-    <Box minH="100vh" bg="gray.50">
-      <Container maxW="7xl" py={8} px={{ base: 2, md: 8 }}>
-        {/* Header */}
-        <VStack spacing={8} align="stretch">
-          <Box>
-            <Heading 
-              size={{ base: 'lg', md: '2xl' }}
-              color="gray.800" 
-              fontWeight="bold"
-              mb={2}
-              textAlign={{ base: 'center', md: 'left' }}
-            >
-              Welcome back, {user?.name}! 👋
+    <Box minH="100vh" py={{ base: 12, md: 20 }}>
+      <Container maxW="7xl" px={{ base: 4, md: 8 }}>
+        <VStack spacing={10} align="stretch">
+          <VStack align="start" spacing={3}>
+            <Box className="section-label">My Workspace</Box>
+            <Heading className="section-title">
+              HEY, <Box as="span" color="brand.400">{user?.name?.split(' ')[0]?.toUpperCase()}</Box>
             </Heading>
-            <Text fontSize={{ base: 'md', md: 'lg' }} color="gray.600" textAlign={{ base: 'center', md: 'left' }}>
-              Continue your learning journey with your purchased courses
+            <Text color="#7d8fa3" fontFamily="mono" fontSize="sm">
+              Continue building. Continue shipping.
             </Text>
-          </Box>
+          </VStack>
 
-          {/* Stats */}
-          <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6}>
-            <Card bg="white" boxShadow="lg" borderRadius="xl">
-              <CardBody>
+          {/* STATS */}
+          <SimpleGrid columns={{ base: 1, md: 3 }} spacing={4}>
+            {[
+              { label: 'Total Courses', value: purchasedCourses.length, icon: FiAward },
+              { label: 'Videos', value: totalVideos, icon: FiPlay },
+              { label: 'Total Hours', value: `${totalHours}h`, icon: FiClock },
+            ].map((s, i) => (
+              <Box
+                key={i}
+                position="relative"
+                p={6}
+                bg="#0d1117"
+                border="1px solid"
+                borderColor="rgba(255,255,255,0.07)"
+                _hover={{ borderColor: 'rgba(0,229,255,0.2)' }}
+                transition="all .3s"
+                sx={{
+                  '&::before': {
+                    content: '""',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '2px',
+                    bg: 'linear-gradient(90deg, #00e5ff, #7b61ff)',
+                    transform: 'scaleX(0)',
+                    transformOrigin: 'left',
+                    transition: 'transform .4s ease',
+                  },
+                  '&:hover::before': { transform: 'scaleX(1)' },
+                }}
+              >
                 <Stat>
-                  <StatLabel color="gray.600" fontSize="sm" fontWeight="medium">
-                    Total Courses
+                  <StatLabel color="#7d8fa3" fontFamily="mono" fontSize="11px" letterSpacing="2px" textTransform="uppercase">
+                    {s.label}
                   </StatLabel>
-                  <StatNumber color="purple.600" fontSize="3xl" fontWeight="bold">
-                    {purchasedCourses.length}
+                  <StatNumber fontFamily="display" color="brand.400" fontSize="48px" fontWeight={400}>
+                    {s.value}
                   </StatNumber>
-                  <StatHelpText color="green.500" fontSize="sm">
-                    <Icon as={FiAward} mr={1} />
-                    Active learner
-                  </StatHelpText>
+                  <Icon as={s.icon} color="purple.400" />
                 </Stat>
-              </CardBody>
-            </Card>
-
-            <Card bg="white" boxShadow="lg" borderRadius="xl">
-              <CardBody>
-                <Stat>
-                  <StatLabel color="gray.600" fontSize="sm" fontWeight="medium">
-                    Total Videos
-                  </StatLabel>
-                  <StatNumber color="purple.600" fontSize="3xl" fontWeight="bold">
-                    {purchasedCourses.reduce((acc, course) => acc + (course.videos?.length || 0), 0)}
-                  </StatNumber>
-                  <StatHelpText color="blue.500" fontSize="sm">
-                    <Icon as={FiPlay} mr={1} />
-                    Available to watch
-                  </StatHelpText>
-                </Stat>
-              </CardBody>
-            </Card>
-
-            <Card bg="white" boxShadow="lg" borderRadius="xl">
-              <CardBody>
-                <Stat>
-                  <StatLabel color="gray.600" fontSize="sm" fontWeight="medium">
-                    Learning Time
-                  </StatLabel>
-                  <StatNumber color="purple.600" fontSize="3xl" fontWeight="bold">
-                    {purchasedCourses.reduce((acc, course) => {
-                      const duration = parseInt(course.duration?.replace(/\D/g, '') || '0');
-                      return acc + duration;
-                    }, 0)}h
-                  </StatNumber>
-                  <StatHelpText color="orange.500" fontSize="sm">
-                    <Icon as={FiClock} mr={1} />
-                    Total duration
-                  </StatHelpText>
-                </Stat>
-              </CardBody>
-            </Card>
+              </Box>
+            ))}
           </SimpleGrid>
 
-          {/* User Info Card */}
-          <Card bg="white" boxShadow="lg" borderRadius="xl">
+          {/* PROFILE CARD */}
+          <Card>
             <CardHeader>
-              <HStack spacing={4} flexDirection={{ base: 'column', sm: 'row' }} align={{ base: 'start', sm: 'center' }}>
+              <HStack spacing={4}>
                 <Box
                   p={3}
-                  bg="linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)"
-                  borderRadius="xl"
+                  bg="rgba(0,229,255,0.08)"
+                  border="1px solid"
+                  borderColor="rgba(0,229,255,0.18)"
+                  borderRadius="md"
                 >
-                  <Icon as={FiUser} w={6} h={6} color="white" />
+                  <Icon as={FiUser} w={5} h={5} color="brand.400" />
                 </Box>
-                <VStack align="start" spacing={1}>
-                  <Heading size="md" color="gray.800">
-                    Profile Information
+                <VStack align="start" spacing={0}>
+                  <Heading size="md" fontFamily="display" fontWeight={400} color="white" letterSpacing="0.5px">
+                    PROFILE INFO
                   </Heading>
-                  <Text color="gray.600" fontSize="sm">
-                    Your account details and preferences
+                  <Text color="#7d8fa3" fontSize="sm">
+                    Account details & quick edit
                   </Text>
                 </VStack>
               </HStack>
             </CardHeader>
             <CardBody pt={0}>
-              <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
+              <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
                 <VStack align="start" spacing={3}>
-                  <HStack spacing={3}>
-                    <Icon as={FiUser} color="gray.400" />
-                    <Text color="gray.600">
-                      <strong>Name:</strong> {user?.name}
-                    </Text>
+                  <HStack color="#7d8fa3" fontSize="sm">
+                    <Icon as={FiUser} color="brand.400" />
+                    <Text>{user?.name}</Text>
                   </HStack>
-                  <HStack spacing={3}>
-                    <Icon as={FiMail} color="gray.400" />
-                    <Text color="gray.600">
-                      <strong>Email:</strong> {user?.email}
-                    </Text>
+                  <HStack color="#7d8fa3" fontSize="sm">
+                    <Icon as={FiMail} color="brand.400" />
+                    <Text>{user?.email || '—'}</Text>
                   </HStack>
-                  <HStack spacing={3}>
-                    <Icon as={FiCalendar} color="gray.400" />
-                    <Text color="gray.600">
-                      <strong>Member since:</strong> {new Date().toLocaleDateString()}
-                    </Text>
+                  <HStack color="#7d8fa3" fontSize="sm">
+                    <Icon as={FiCalendar} color="brand.400" />
+                    <Text>Member since {new Date().toLocaleDateString()}</Text>
                   </HStack>
                 </VStack>
-                <VStack align="start" spacing={3}>
+                <Box>
                   <Button
                     as={RouterLink}
                     to="/profile"
-                    colorScheme="purple"
                     variant="outline"
                     leftIcon={<FiUser />}
-                    size="md"
+                    fontFamily="mono"
+                    fontSize="12px"
+                    letterSpacing="2px"
+                    textTransform="uppercase"
                   >
                     Edit Profile
                   </Button>
-                </VStack>
+                </Box>
               </SimpleGrid>
             </CardBody>
           </Card>
 
-          {/* Purchased Courses */}
-          <Card bg="white" boxShadow="lg" borderRadius="xl">
+          {/* PURCHASED COURSES */}
+          <Card>
             <CardHeader>
-              <HStack spacing={4} flexDirection={{ base: 'column', sm: 'row' }} align={{ base: 'start', sm: 'center' }}>
+              <HStack spacing={4}>
                 <Box
                   p={3}
-                  bg="linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)"
-                  borderRadius="xl"
+                  bg="rgba(123,97,255,0.08)"
+                  border="1px solid"
+                  borderColor="rgba(123,97,255,0.2)"
+                  borderRadius="md"
                 >
-                  <Icon as={FiBookOpen} w={6} h={6} color="white" />
+                  <Icon as={FiBookOpen} w={5} h={5} color="purple.400" />
                 </Box>
-                <VStack align="start" spacing={1}>
-                  <Heading size="md" color="gray.800">
-                    My Courses
+                <VStack align="start" spacing={0}>
+                  <Heading size="md" fontFamily="display" fontWeight={400} color="white" letterSpacing="0.5px">
+                    MY COURSES
                   </Heading>
-                  <Text color="gray.600" fontSize="sm">
-                    Continue learning from where you left off
+                  <Text color="#7d8fa3" fontSize="sm">
+                    Pick up where you left off
                   </Text>
                 </VStack>
               </HStack>
@@ -260,130 +249,135 @@ export default function Dashboard() {
                   <VStack spacing={4}>
                     <Box
                       p={6}
-                      bg="gray.100"
+                      bg="rgba(255,255,255,0.04)"
+                      border="1px solid"
+                      borderColor="rgba(255,255,255,0.07)"
                       borderRadius="full"
                     >
-                      <Icon as={FiBookOpen} w={12} h={12} color="gray.400" />
+                      <Icon as={FiBookOpen} w={10} h={10} color="#7d8fa3" />
                     </Box>
-                    <VStack spacing={2}>
-                      <Heading size="md" color="gray.600">
-                        No courses purchased yet
+                    <VStack spacing={1}>
+                      <Heading size="sm" color="white">
+                        No courses yet
                       </Heading>
-                      <Text color="gray.500" textAlign="center">
-                        Start your learning journey by exploring our course catalog
+                      <Text color="#7d8fa3" fontSize="sm" textAlign="center">
+                        Start by exploring our curated catalog.
                       </Text>
                     </VStack>
                     <Button
                       as={RouterLink}
                       to="/courses"
-                      colorScheme="purple"
-                      size="lg"
+                      variant="cyan"
                       leftIcon={<FiPlay />}
+                      sx={{
+                        clipPath: 'polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%)',
+                      }}
                     >
                       Browse Courses
                     </Button>
                   </VStack>
                 </Center>
               ) : (
-                <SimpleGrid columns={{ base: 1, sm: 2, md: 3 }} spacing={6}>
-                  {purchasedCourses.map((course) => (
-                    <Card 
-                      key={course._id} 
-                      bg="gray.50" 
-                      boxShadow="md" 
-                      borderRadius="xl"
-                      _hover={{ 
-                        transform: 'translateY(-4px)', 
-                        boxShadow: 'xl',
-                        transition: 'all 0.2s'
-                      }}
-                    >
+                <SimpleGrid columns={{ base: 1, sm: 2, md: 3 }} spacing={5}>
+                  {purchasedCourses.map((course) => {
+                    const progress = getProgressPercentage()
+                    return (
                       <Box
-                        h="200px"
-                        bg="gray.200"
-                        borderRadius="xl"
-                        mb={4}
+                        key={course._id}
+                        bg="#080b0f"
+                        border="1px solid"
+                        borderColor="rgba(255,255,255,0.07)"
                         overflow="hidden"
-                        position="relative"
+                        transition="all .3s"
+                        _hover={{
+                          borderColor: 'rgba(0,229,255,0.2)',
+                          transform: 'translateY(-4px)',
+                        }}
                       >
-                        {course.thumbnail ? (
-                          <Image
-                            src={course.thumbnail}
-                            alt={course.title}
-                            w="full"
-                            h="full"
-                            objectFit="cover"
-                          />
-                        ) : (
-                          <Center h="full">
-                            <Icon as={FiBookOpen} w={12} h={12} color="gray.400" />
-                          </Center>
-                        )}
-                        <Badge
-                          position="absolute"
-                          top={3}
-                          right={3}
-                          colorScheme="purple"
-                          borderRadius="full"
-                          px={3}
-                          py={1}
-                        >
-                          {course.level}
-                        </Badge>
-                      </Box>
-                      
-                      <CardBody pt={0}>
-                        <VStack align="start" spacing={3}>
-                          <VStack align="start" spacing={1} w="full">
-                            <Heading size="md" color="gray.800" noOfLines={2}>
-                              {course.title}
-                            </Heading>
-                            <Text color="gray.600" fontSize="sm" noOfLines={2}>
-                              {course.description}
-                            </Text>
-                          </VStack>
+                        <Box position="relative" h="180px" bg="#111820">
+                          {course.thumbnail || course.imageLink ? (
+                            <Image
+                              src={course.thumbnail || course.imageLink || ''}
+                              alt={course.title}
+                              w="full"
+                              h="full"
+                              objectFit="cover"
+                              sx={{ filter: 'brightness(0.85)' }}
+                            />
+                          ) : (
+                            <Center h="full">
+                              <Icon as={FiBookOpen} w={10} h={10} color="#3d4f63" />
+                            </Center>
+                          )}
+                          <Badge
+                            position="absolute"
+                            top={3}
+                            right={3}
+                            bg="rgba(123,97,255,0.18)"
+                            color="purple.300"
+                            border="1px solid"
+                            borderColor="rgba(123,97,255,0.35)"
+                          >
+                            {course.level}
+                          </Badge>
+                        </Box>
 
-                          <HStack justify="space-between" w="full">
-                            <Badge colorScheme="blue" borderRadius="full">
+                        <VStack align="start" p={5} spacing={3}>
+                          <Heading
+                            fontFamily="display"
+                            fontSize="20px"
+                            fontWeight={400}
+                            color="white"
+                            noOfLines={2}
+                          >
+                            {course.title}
+                          </Heading>
+                          <Text color="#7d8fa3" fontSize="13px" noOfLines={2}>
+                            {course.description}
+                          </Text>
+
+                          <HStack justify="space-between" w="full" fontSize="11px" fontFamily="mono">
+                            <Badge variant="subtle" bg="rgba(0,229,255,0.06)" color="brand.300">
                               {course.category}
                             </Badge>
-                            <Text color="gray.500" fontSize="sm">
-                              <Icon as={FiClock} mr={1} />
-                              {course.duration}
-                            </Text>
+                            <HStack color="#7d8fa3">
+                              <Icon as={FiClock} />
+                              <Text>{course.duration}</Text>
+                            </HStack>
                           </HStack>
 
-                          <VStack spacing={2} w="full">
-                            <HStack justify="space-between" w="full">
-                              <Text fontSize="sm" color="gray.600">
-                                Progress
-                              </Text>
-                              <Text fontSize="sm" color="purple.600" fontWeight="medium">
-                                {getProgressPercentage()}%
-                              </Text>
+                          <Box w="full">
+                            <HStack justify="space-between" mb={1} fontSize="11px" color="#7d8fa3" fontFamily="mono">
+                              <Text>PROGRESS</Text>
+                              <Text color="brand.400">{progress}%</Text>
                             </HStack>
-                            <Progress 
-                              value={getProgressPercentage()} 
-                              colorScheme="purple" 
+                            <Progress
+                              value={progress}
+                              size="xs"
+                              bg="rgba(255,255,255,0.05)"
+                              colorScheme="blue"
                               borderRadius="full"
-                              size="sm"
                             />
-                          </VStack>
+                          </Box>
 
                           <Button
                             as={RouterLink}
                             to={`/courses/${course._id}`}
-                            colorScheme="purple"
-                            size="md"
-                            w="full"
+                            variant="outline"
                             leftIcon={<FiPlay />}
+                            w="full"
+                            fontFamily="mono"
+                            fontSize="11px"
+                            letterSpacing="2px"
+                            textTransform="uppercase"
+                            size="sm"
                           >
-                            Continue Learning
+                            Continue
                           </Button>
                         </VStack>
-                      </CardBody>
-                    </Card>
-                  ))}
+                      </Box>
+                    )
+                  })}
                 </SimpleGrid>
               )}
             </CardBody>
@@ -391,5 +385,5 @@ export default function Dashboard() {
         </VStack>
       </Container>
     </Box>
-  );
-} 
+  )
+}

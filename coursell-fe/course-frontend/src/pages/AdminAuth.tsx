@@ -1,84 +1,163 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { adminSignUp, adminSignIn } from "../services/api";
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import {
+  Box,
+  Button,
+  Container,
+  Flex,
+  FormControl,
+  FormLabel,
+  HStack,
+  Heading,
+  Icon,
+  Input,
+  Text,
+  VStack,
+  useToast,
+} from '@chakra-ui/react'
+import { FiShield } from 'react-icons/fi'
+import { adminSignIn, adminSignUp } from '../services/api'
 
 const AdminAuth = () => {
-  const [isSignUp, setIsSignUp] = useState(false);
-  const [formData, setFormData] = useState({
-    username: "",
-    password: "",
-  });
-  const navigate = useNavigate();
+  const [isSignUp, setIsSignUp] = useState(false)
+  const [formData, setFormData] = useState({ username: '', password: '' })
+  const navigate = useNavigate()
+  const toast = useToast()
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+    setFormData({ ...formData, [e.target.name]: e.target.value })
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
     try {
       if (isSignUp) {
-        await adminSignUp(formData);
-        alert("Sign up successful! Please sign in.");
-        setIsSignUp(false);
+        await adminSignUp(formData)
+        toast({ title: 'Sign up successful', description: 'Please sign in', status: 'success', duration: 3000 })
+        setIsSignUp(false)
       } else {
-        const response = await adminSignIn(formData);
-        localStorage.setItem("adminToken", response.data.token);
-        navigate("/admin");
+        const res = await adminSignIn(formData)
+        localStorage.setItem('adminToken', res.data.token)
+        navigate('/admin')
       }
     } catch (err) {
-      console.error("Auth error:", err);
-      alert("Operation failed");
+      toast({ title: 'Operation failed', status: 'error', duration: 3000 })
     }
-  };
+  }
 
   return (
-    <div className="container mx-auto py-8">
-      <div className="max-w-md mx-auto bg-white rounded-lg shadow-md p-6">
-        <h1 className="text-2xl font-bold mb-4">
-          {isSignUp ? "Admin Sign Up" : "Admin Sign In"}
-        </h1>
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label className="block text-gray-700">Username</label>
-            <input
-              type="text"
-              name="username"
-              value={formData.username}
-              onChange={handleInputChange}
-              className="w-full p-2 border rounded"
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700">Password</label>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleInputChange}
-              className="w-full p-2 border rounded"
-              required
-            />
-          </div>
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700"
-          >
-            {isSignUp ? "Sign Up" : "Sign In"}
-          </button>
-        </form>
-        <button
-          onClick={() => setIsSignUp(!isSignUp)}
-          className="mt-4 text-blue-600 hover:underline"
-        >
-          {isSignUp
-            ? "Already have an account? Sign In"
-            : "Need an account? Sign Up"}
-        </button>
-      </div>
-    </div>
-  );
-};
+    <Box minH="100vh" py={{ base: 14, md: 24 }}>
+      <Container maxW="md" px={{ base: 4, md: 8 }}>
+        <VStack align="start" spacing={3} mb={8}>
+          <Box className="section-label">Admin</Box>
+          <Heading className="section-title">
+            {isSignUp ? 'SIGN UP' : 'SIGN IN'}
+          </Heading>
+        </VStack>
 
-export default AdminAuth;
+        <Box
+          bg="#0d1117"
+          border="1px solid"
+          borderColor="rgba(255,255,255,0.07)"
+          overflow="hidden"
+        >
+          <Flex
+            bg="#111820"
+            px={4}
+            py={3}
+            borderBottom="1px solid"
+            borderColor="rgba(255,255,255,0.07)"
+            align="center"
+            gap={3}
+          >
+            <HStack spacing={2}>
+              <Box w="11px" h="11px" borderRadius="50%" bg="#ff5f57" />
+              <Box w="11px" h="11px" borderRadius="50%" bg="#febc2e" />
+              <Box w="11px" h="11px" borderRadius="50%" bg="#28c840" />
+            </HStack>
+            <Text
+              flex={1}
+              textAlign="center"
+              fontFamily="mono"
+              fontSize="12px"
+              color="#3d4f63"
+              letterSpacing="1px"
+            >
+              admin ~ {isSignUp ? 'register' : 'login'}.sh
+            </Text>
+            <Icon as={FiShield} color="brand.400" />
+          </Flex>
+          <Box p={{ base: 6, md: 8 }}>
+            <form onSubmit={handleSubmit}>
+              <VStack spacing={5} align="stretch">
+                <FormControl isRequired>
+                  <FormLabel
+                    fontFamily="mono"
+                    fontSize="11px"
+                    color="#7d8fa3"
+                    letterSpacing="2px"
+                    textTransform="uppercase"
+                  >
+                    Username
+                  </FormLabel>
+                  <Input
+                    name="username"
+                    value={formData.username}
+                    onChange={handleInputChange}
+                    size="lg"
+                  />
+                </FormControl>
+
+                <FormControl isRequired>
+                  <FormLabel
+                    fontFamily="mono"
+                    fontSize="11px"
+                    color="#7d8fa3"
+                    letterSpacing="2px"
+                    textTransform="uppercase"
+                  >
+                    Password
+                  </FormLabel>
+                  <Input
+                    name="password"
+                    type="password"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    size="lg"
+                  />
+                </FormControl>
+
+                <Button
+                  type="submit"
+                  variant="cyan"
+                  w="full"
+                  size="lg"
+                  sx={{
+                    clipPath: 'polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%)',
+                  }}
+                >
+                  {isSignUp ? 'Sign Up' : 'Sign In'}
+                </Button>
+
+                <Button
+                  variant="link"
+                  onClick={() => setIsSignUp((p) => !p)}
+                  fontFamily="mono"
+                  fontSize="12px"
+                  letterSpacing="2px"
+                  textTransform="uppercase"
+                >
+                  {isSignUp
+                    ? 'Already have an account? Sign In'
+                    : 'Need an account? Sign Up'}
+                </Button>
+              </VStack>
+            </form>
+          </Box>
+        </Box>
+      </Container>
+    </Box>
+  )
+}
+
+export default AdminAuth
