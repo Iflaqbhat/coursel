@@ -71,11 +71,116 @@ const techChips = [
 export default function Home() {
   const { isAdmin } = useContext(AuthContext)
 
+  // Cinematic word-by-word reveal words
+  const words = [
+    { text: 'Welcome', color: 'white' },
+    { text: 'to', color: '#7d8fa3' },
+    { text: 'Coursell', color: '#00e5ff' },
+    { text: '—', color: '#3d4f63' },
+    { text: "India's", color: 'white' },
+    { text: '#1', color: '#00e5ff' },
+    { text: 'Learning', color: '#7b61ff' },
+    { text: 'Platform', color: 'white' },
+  ]
+
   return (
     <Box minH="100vh">
       {/* HERO */}
       <Box position="relative" pt={{ base: 14, md: 20 }} pb={{ base: 16, md: 24 }}>
         <Container maxW="7xl" px={{ base: 4, md: 8 }}>
+
+          {/* ── CINEMATIC INDIA HEADLINE — full-width centered ─────────── */}
+          <Box
+            textAlign="center"
+            mb={{ base: 12, md: 16 }}
+            sx={{
+              '@keyframes wordIn': {
+                '0%': { opacity: 0, transform: 'translateY(28px) scale(0.88)' },
+                '100%': { opacity: 1, transform: 'translateY(0) scale(1)' },
+              },
+            }}
+          >
+            {/* 🇮🇳 country pill */}
+            <Flex
+              justify="center"
+              mb={5}
+            >
+              <HStack
+                spacing={3}
+                px={5}
+                py="10px"
+                border="1px solid"
+                borderColor="rgba(0,229,255,0.25)"
+                bg="rgba(0,229,255,0.05)"
+                borderRadius="full"
+                fontFamily="mono"
+                fontSize={{ base: '12px', md: '14px' }}
+                color="brand.400"
+                letterSpacing="2px"
+                textTransform="uppercase"
+                sx={{ backdropFilter: 'blur(10px)' }}
+              >
+                <Box as="span" fontSize="18px">🇮🇳</Box>
+                <Text>Official Platform · Est. 2024</Text>
+                <Box
+                  w="6px"
+                  h="6px"
+                  borderRadius="50%"
+                  bg="brand.400"
+                  sx={{ animation: 'pulseDot 2s ease infinite' }}
+                />
+              </HStack>
+            </Flex>
+
+            {/* animated word-by-word sentence */}
+            <Flex
+              justify="center"
+              align="baseline"
+              flexWrap="wrap"
+              gap={{ base: '10px', md: '16px' }}
+              px={4}
+            >
+              {words.map((w, i) => (
+                <Box
+                  key={i}
+                  as="span"
+                  fontFamily="display"
+                  fontWeight={400}
+                  fontSize={{ base: '36px', sm: '48px', md: '68px', lg: '80px' }}
+                  lineHeight="1"
+                  letterSpacing="-1px"
+                  color={w.color}
+                  sx={{
+                    display: 'inline-block',
+                    opacity: 0,
+                    animation: `wordIn 0.6s cubic-bezier(0.22,1,0.36,1) forwards`,
+                    animationDelay: `${i * 0.12}s`,
+                    // extra glow on cyan words
+                    ...(w.color === '#00e5ff' && {
+                      textShadow: '0 0 40px rgba(0,229,255,0.35)',
+                    }),
+                    ...(w.color === '#7b61ff' && {
+                      textShadow: '0 0 40px rgba(123,97,255,0.35)',
+                    }),
+                  }}
+                >
+                  {w.text}
+                </Box>
+              ))}
+            </Flex>
+
+            {/* thin glowing underline */}
+            <Box
+              mt={5}
+              mx="auto"
+              w={{ base: '200px', md: '340px' }}
+              h="1px"
+              bgGradient="linear(to-r, transparent, brand.400, purple.400, transparent)"
+              sx={{ opacity: 0, animation: 'wordIn 0.8s 1.2s forwards' }}
+            />
+          </Box>
+          {/* ─────────────────────────────────────────────────────────── */}
+
           <Grid
             templateColumns={{ base: '1fr', lg: '1fr 480px' }}
             gap={{ base: 12, lg: 0 }}
@@ -105,23 +210,6 @@ export default function Home() {
                 Available · Live · Building
               </HStack>
 
-              <HStack
-                spacing={2}
-                px={4}
-                py={2}
-                border="1px solid"
-                borderColor="rgba(0,229,255,0.2)"
-                bg="rgba(0,229,255,0.04)"
-                fontFamily="mono"
-                fontSize="11px"
-                color="brand.400"
-                letterSpacing="2px"
-                textTransform="uppercase"
-              >
-                <Box as="span">🇮🇳</Box>
-                <Text>India's #1 Learning Platform</Text>
-              </HStack>
-
               <Text
                 fontFamily="mono"
                 fontSize="14px"
@@ -140,8 +228,8 @@ export default function Home() {
                 letterSpacing="-1px"
                 color="white"
               >
-                INDIA'S TOP <br />
-                <Box as="span" color="brand.400">LEARNING</Box>
+                LEARN. <br />
+                <Box as="span" color="brand.400">BUILD.</Box>
                 <br />
                 <Box
                   as="span"
@@ -155,7 +243,7 @@ export default function Home() {
                     },
                   }}
                 >
-                  PLATFORM.
+                  SHIP.
                 </Box>
               </Heading>
 
