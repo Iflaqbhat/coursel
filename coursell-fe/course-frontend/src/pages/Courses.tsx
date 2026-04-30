@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react'
-import { Link as RouterLink } from 'react-router-dom'
+import { Link as RouterLink, useNavigate } from 'react-router-dom'
 import {
   Badge,
   Box,
@@ -51,6 +51,7 @@ const categories = [
 
 export default function Courses() {
   const { isAdmin } = useContext(AuthContext)
+  const navigate = useNavigate()
   const [courses, setCourses] = useState<Course[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
@@ -198,6 +199,16 @@ export default function Courses() {
                 display="flex"
                 flexDirection="column"
                 transition="all .35s"
+                cursor="pointer"
+                role="link"
+                tabIndex={0}
+                onClick={() => navigate(`/courses/${course._id}`)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    navigate(`/courses/${course._id}`)
+                  }
+                }}
                 _hover={{
                   borderColor: 'rgba(0,229,255,0.25)',
                   transform: 'translateY(-8px)',
@@ -300,6 +311,7 @@ export default function Courses() {
                   <Button
                     as={RouterLink}
                     to={`/courses/${course._id}`}
+                    onClick={(e) => e.stopPropagation()}
                     variant="outline"
                     leftIcon={<FiPlay />}
                     fontFamily="mono"

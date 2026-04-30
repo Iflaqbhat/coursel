@@ -10,7 +10,7 @@ import {
   VStack,
   useToast,
 } from '@chakra-ui/react'
-import { Link as RouterLink } from 'react-router-dom'
+import { Link as RouterLink, useNavigate } from 'react-router-dom'
 import { FiClock, FiPlay, FiShoppingCart, FiStar, FiUsers } from 'react-icons/fi'
 
 interface CourseCardProps {
@@ -47,8 +47,12 @@ const CourseCard = ({
   isLoading = false,
 }: CourseCardProps) => {
   const toast = useToast()
+  const navigate = useNavigate()
 
-  const handlePurchase = () => {
+  const openCourse = () => navigate(`/courses/${course.id}`)
+
+  const handlePurchase = (e?: React.MouseEvent) => {
+    e?.stopPropagation()
     if (onPurchase) {
       onPurchase(course.id)
     } else {
@@ -64,6 +68,8 @@ const CourseCard = ({
   return (
     <Box
       role="group"
+      aria-label={`Open course: ${course.title}`}
+      tabIndex={0}
       position="relative"
       bg="#0d1117"
       border="1px solid"
@@ -73,6 +79,14 @@ const CourseCard = ({
       display="flex"
       flexDirection="column"
       transition="all .35s"
+      cursor="pointer"
+      onClick={openCourse}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          openCourse()
+        }
+      }}
       _hover={{
         borderColor: 'rgba(0,229,255,0.25)',
         transform: 'translateY(-6px)',
@@ -183,6 +197,7 @@ const CourseCard = ({
             <Button
               as={RouterLink}
               to={`/courses/${course.id}`}
+              onClick={(e) => e.stopPropagation()}
               variant="outline"
               leftIcon={<FiPlay />}
               fontFamily="mono"
@@ -212,6 +227,7 @@ const CourseCard = ({
               <Button
                 as={RouterLink}
                 to={`/courses/${course.id}`}
+                onClick={(e) => e.stopPropagation()}
                 variant="outline"
                 w="full"
                 size="sm"

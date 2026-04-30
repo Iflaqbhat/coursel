@@ -22,9 +22,11 @@ import {
 } from '@chakra-ui/react'
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons'
 import { FiLock, FiMail, FiShield } from 'react-icons/fi'
-import { Link as RouterLink, useNavigate } from 'react-router-dom'
+import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { AuthContext } from '../context/AuthContext'
+
+type LocationState = { from?: { pathname?: string; search?: string; hash?: string } }
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -34,7 +36,15 @@ export default function Login() {
   const [error, setError] = useState('')
   const toast = useToast()
   const navigate = useNavigate()
+  const location = useLocation()
   const { login } = useContext(AuthContext)
+
+  // Where to send the user after a successful sign-in.
+  // Falls back to the homepage when there's no incoming "from" location.
+  const fromState = (location.state as LocationState | null)?.from
+  const redirectTo = fromState
+    ? `${fromState.pathname || '/'}${fromState.search || ''}${fromState.hash || ''}`
+    : '/'
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -60,7 +70,7 @@ export default function Login() {
         duration: 3000,
         isClosable: true,
       })
-      navigate('/')
+      navigate(redirectTo, { replace: true })
     } catch (err: any) {
       const msg =
         err.response?.data?.message ||
@@ -217,6 +227,7 @@ export default function Login() {
                   <Box
                     as={RouterLink}
                     to="/register"
+                    state={fromState ? { from: fromState } : undefined}
                     color="brand.400"
                     fontWeight="bold"
                     _hover={{ color: 'brand.300' }}

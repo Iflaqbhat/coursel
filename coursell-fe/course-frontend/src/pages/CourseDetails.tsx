@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react'
-import { Link as RouterLink, useParams } from 'react-router-dom'
+import { Link as RouterLink, useLocation, useNavigate, useParams } from 'react-router-dom'
 import {
   Alert,
   AlertIcon,
@@ -84,6 +84,8 @@ function getYouTubeId(url: string) {
 
 export default function CourseDetails() {
   const { id } = useParams()
+  const navigate = useNavigate()
+  const location = useLocation()
   const { user, isAdmin } = useContext(AuthContext)
   const [course, setCourse] = useState<Course | null>(null)
   const [loading, setLoading] = useState(true)
@@ -132,7 +134,13 @@ export default function CourseDetails() {
 
   const handlePurchase = async () => {
     if (!user) {
-      toast({ title: 'Please sign in', status: 'warning', duration: 3000 })
+      toast({
+        title: 'Sign in to continue',
+        description: 'Redirecting you to sign-in...',
+        status: 'info',
+        duration: 1800,
+      })
+      navigate('/login', { state: { from: location } })
       return
     }
     setPurchasing(true)
@@ -164,7 +172,13 @@ export default function CourseDetails() {
 
   const openPurchase = () => {
     if (!user) {
-      toast({ title: 'Please sign in to purchase', status: 'warning', duration: 3000 })
+      toast({
+        title: 'Sign in to continue',
+        description: 'Redirecting you to sign-in...',
+        status: 'info',
+        duration: 1800,
+      })
+      navigate('/login', { state: { from: location } })
       return
     }
     onOpen()
@@ -337,7 +351,9 @@ export default function CourseDetails() {
                     <HStack mb={4}>
                       <Icon as={FiLock} color="pink.400" />
                       <Text color="pink.300" fontSize="sm">
-                        Purchase this course to unlock all videos.
+                        {user
+                          ? 'Purchase this course to unlock all videos.'
+                          : 'Sign in and purchase this course to unlock all videos.'}
                       </Text>
                     </HStack>
                   )}
@@ -398,11 +414,11 @@ export default function CourseDetails() {
                             </HStack>
                           </ListItem>
                         ))
-                    ) : (
+                    ) : hasAccess ? (
                       <Text color="#7d8fa3" textAlign="center" py={8} fontFamily="mono" fontSize="sm">
                         No videos available yet.
                       </Text>
-                    )}
+                    ) : null}
                   </List>
                 </CardBody>
               </Card>

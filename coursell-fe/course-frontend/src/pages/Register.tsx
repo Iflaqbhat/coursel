@@ -22,9 +22,11 @@ import {
 } from '@chakra-ui/react'
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons'
 import { FiLock, FiMail, FiUser, FiZap } from 'react-icons/fi'
-import { Link as RouterLink, useNavigate } from 'react-router-dom'
+import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { AuthContext } from '../context/AuthContext'
+
+type LocationState = { from?: { pathname?: string; search?: string; hash?: string } }
 
 export default function Register() {
   const [firstName, setFirstName] = useState('')
@@ -36,7 +38,13 @@ export default function Register() {
   const [error, setError] = useState('')
   const toast = useToast()
   const navigate = useNavigate()
+  const location = useLocation()
   const { login } = useContext(AuthContext)
+
+  const fromState = (location.state as LocationState | null)?.from
+  const redirectTo = fromState
+    ? `${fromState.pathname || '/'}${fromState.search || ''}${fromState.hash || ''}`
+    : '/'
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -68,7 +76,7 @@ export default function Register() {
         duration: 4000,
         isClosable: true,
       })
-      navigate('/')
+      navigate(redirectTo, { replace: true })
     } catch (err: any) {
       const msg = err.response?.data?.message || 'Registration failed.'
       setError(msg)
@@ -270,6 +278,7 @@ export default function Register() {
                   <Box
                     as={RouterLink}
                     to="/login"
+                    state={fromState ? { from: fromState } : undefined}
                     color="brand.400"
                     fontWeight="bold"
                     _hover={{ color: 'brand.300' }}
